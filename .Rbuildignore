@@ -1,0 +1,5 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^.*\.log$
+^README.Rmd
+^csprojections_0.1.0.tar.gz

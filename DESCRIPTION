@@ -1,0 +1,26 @@
+Package: PoDDyHePoProjection
+Type: Package
+Title: Projection Method for PoDDyHePo Project
+Version: 0.1.0
+Author: Zhi Zhou
+Maintainer: Zhi Zhou <zhi.zhou@thl.fi>
+Description: This package includes some useful functions for PoDDy-HePo Project.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 3.5.0),
+    mice, 
+    ggplot2,
+    magrittr,
+    MIWilson,
+    dplyr
+Imports:
+    rlang,
+    stats,
+    plyr,
+    qwraps2,
+    fastDummies,
+    splines
+RoxygenNote: 7.1.2
+
