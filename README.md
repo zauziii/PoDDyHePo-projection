@@ -155,7 +155,7 @@ special requirements given below). The third is a sample size and the
 fourth is the years to be projected. Above, 2021, 2025, 2030, 2035 and
 2040, are the years to be projected, so
 `y2pred = c(2021, 2025, 2030, 2035, 2040)`. If you want to try our
-interrnal population forecasts, use
+internal population forecasts, use
 `file = system.file("extdata", "003_128v_2040_20210730-015759.csv", package = "csprojections")`.
 That is,
 
