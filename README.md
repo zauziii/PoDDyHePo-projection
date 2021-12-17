@@ -1,7 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-Introduction
-============
+# Introduction
 
 The purpose of this package is to project prevalences of health
 indicators in future. The method uses data on cross-sectional surveys
@@ -21,8 +20,7 @@ population structure. This package contains the following functions:
     `PoDDyHePoProjection`.
 6.  `PoDDyHePoPlot`: plots the prevalences against survey year.
 
-Getting stated
-==============
+# Getting stated
 
 Before getting started, make sure that you have installed and attached
 the package. Also, remember to load the following package: `splines`.
@@ -81,8 +79,7 @@ When formatting your dataset, the data types of year, sex and age should
 be numeric, factor and numeric, respectively. Other binary/categorical
 variables should be factor and continuous numeric.
 
-Guidelines for Using the package
---------------------------------
+## Guidelines for Using the package
 
 **Step 1**: If data from past surveys include missing values, they are
 imputed before selecting models for projection.
@@ -116,7 +113,7 @@ NULL, degrees of freedom(`df`), breakpoints that define the spline
 (`knots`) and boundary points (`b.knots`) are ignored; if it is not
 NULL, we can set df or knots and b.knots. Examples are given as follows
 based on `testdata`. More details about `ns` function can be found via
-<a href="https://www.rdocumentation.org/packages/splines/versions/3.6.2/topics/ns" class="uri">https://www.rdocumentation.org/packages/splines/versions/3.6.2/topics/ns</a>.
+<https://www.rdocumentation.org/packages/splines/versions/3.6.2/topics/ns>.
 
     smo <- PoDDyHePoModelSelection(imp, 
                                    NsVar = "year", 
@@ -160,13 +157,19 @@ fourth is the years to be projected. Above, 2021, 2025, 2030, 2035 and
 `y2pred = c(2021, 2025, 2030, 2035, 2040)`. If you want to try our
 interrnal population forecasts, use
 `file = system.file("extdata", "003_128v_2040_20210730-015759.csv", package = "csprojections")`.
+That is,
+
+    testdata2040 <- PoDDyHePoPopulationDF(testdata,
+                                          file = system.file("extdata","003_128v_2040_20210730-015759.csv", package = "csprojections"), 
+                                          size = 10000, 
+                                          y2pred = c(2021, 2025, 2030, 2035, 2040))
 
 In order to make this function work, the population forecast data has to
 be in a specific form. In case of Finland, data can be downloaded in the
 correct form by following the next steps:
 
 1.  Visit
-    <a href="https://pxnet2.stat.fi/PXWeb/pxweb/en/StatFin/StatFin__vrm__vaenn/" class="uri">https://pxnet2.stat.fi/PXWeb/pxweb/en/StatFin/StatFin__vrm__vaenn/</a>,
+    <https://pxnet2.stat.fi/PXWeb/pxweb/en/StatFin/StatFin__vrm__vaenn/>,
     scroll down and find Population projection.
 2.  Click 139f – Population projection 2021: Population according to age
     and sex by area, 2021-2040 \[Size: 5818 Kb\] \[Modified:
@@ -302,8 +305,7 @@ interest. Examples are given below.
 Notice: The function creates a table for only one variable. Does not
 support several variables at one time.
 
-Acknowledgement
-===============
+# Acknowledgement
 
 This R code has been developed in the framework of the Projections of
 the burden of disease and disability in Finland - health policy
