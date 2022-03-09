@@ -4,14 +4,16 @@
 \alias{PoDDyHePoProjection}
 \title{Projection Function Developed for PoDDy-HePo Project}
 \usage{
-PoDDyHePoProjection(data, m = 5, sep_col = NULL, ...)
+PoDDyHePoProjection(data, m = 5, maxit = 10, printFlag = F, ...)
 }
 \arguments{
 \item{data}{A well-formatted data set ready for projection.}
 
-\item{m}{Number of multiple imputations. The default is \code{m=5}}
+\item{m}{Number of multiple imputations. The default is \code{m=5}.}
 
-\item{sep_col}{A variable (usually has 3 levels or more) to be seperated.}
+\item{maxit}{A scalar giving the number of iterations. The default is 10.}
+
+\item{printFlag}{If `TRUE`, `mice` will print history on console. Use `print=FALSE` for silent computation.}
 
 \item{...}{Formulas. Formulas.}
 }

@@ -7,6 +7,7 @@
 #'
 #' @param imp Complete data (mids object) from PoDDyHePoProjeciton(). 
 #' @param colName A variable whose prevalences are to be estimated.
+#' @param sep_col A variable (usually has 3 levels or more) to be calculated its porprotion. 
 #'
 #'
 #' @return Returns a data frame ready for plotting.
@@ -14,7 +15,20 @@
 #' @import MIWilson dplyr
 #' @importFrom magrittr %>% 
 
-PoDDyHePoPool <- function(imp, colName){
+PoDDyHePoPool <- function(imp, colName, sep_col = NULL){
+  
+  if(!is.null(sep_col)){
+    
+    # Long format
+    imp.complete <- complete(imp, action = "long", include = T) 
+    
+    # Calculated the proportion for each level (Create dummies) - if necesssary
+    imp.complete <- imp.complete %>% 
+      fastDummies::dummy_cols(select_columns = sep_col, ignore_na = T)
+    
+    # Transform back to mids
+    imp <- as.mids(imp.complete)
+  }
   
   # Turn imputed data to long format
   imp.long <- complete(imp, action = "long", include = T)
@@ -96,4 +110,3 @@ PoDDyHePoPool <- function(imp, colName){
   return(pool)
   
 }
-      

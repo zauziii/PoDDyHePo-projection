@@ -20,5 +20,5 @@ It returns a table arranged by Gender and Year.
 \details{
 Description of PoDDyHePoFreqTable()
 
-The table includes Total, Missing amount and its proportion (%).
+The table includes total, respondents (N) and its proportion (%).
 }

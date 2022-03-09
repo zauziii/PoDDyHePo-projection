@@ -4,12 +4,14 @@
 \alias{PoDDyHePoPool}
 \title{Pool Function Developed for PoDDy-HePo project.}
 \usage{
-PoDDyHePoPool(imp, colName)
+PoDDyHePoPool(imp, colName, sep_col = NULL)
 }
 \arguments{
 \item{imp}{Complete data (mids object) from PoDDyHePoProjeciton().}
 
 \item{colName}{A variable whose prevalences are to be estimated.}
+
+\item{sep_col}{A variable (usually has 3 levels or more) to be calculated its porprotion.}
 }
 \value{
 Returns a data frame ready for plotting.

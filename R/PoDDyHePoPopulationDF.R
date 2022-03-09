@@ -59,15 +59,22 @@ PoDDyHePoPopulationDF <- function(data, file, size, y2pred){
   # Rename data frames
   colnames(prop.m) <- c("Age", y2pred)
   colnames(prop.w) <- c("Age", y2pred)
+  
+  # select the years that we need
+  prop.m <-  prop.m %>% 
+    subset(select = c("Age", y2pred))
+  
+  prop.w <-  prop.w %>% 
+    subset(select = c("Age", y2pred))
 
   # Size of sample to be projected
   NewN <- size
 
   NewSet_Total<- data.frame()
-  for (i in 1:(length(total)-1)) {
+  for (i in 1:(length(y2pred))) {
     for (j in 1:nrow(prop.m)) {
-      NewSet1 <- data.frame(year = rep(y2pred[i], round(prop.m[j, i+1] * NewN)), sex = rep(1, round(prop.m[j, i+1] * NewN)), age = rep(24 + j, round(prop.m[j, i+1] * NewN)))
-      NewSet2 <- data.frame(year = rep(y2pred[i], round(prop.w[j, i+1] * NewN)), sex = rep(2, round(prop.w[j, i+1] * NewN)), age = rep(24 + j, round(prop.w[j, i+1] * NewN)))
+      NewSet1 <- data.frame(year = rep(y2pred[i], round(prop.m[j, i+1] * NewN)), sex = rep(1, round(prop.m[j, i+1] * NewN)), age = rep(range(data$age)[1] - 1 + j, round(prop.m[j, i+1] * NewN)))
+      NewSet2 <- data.frame(year = rep(y2pred[i], round(prop.w[j, i+1] * NewN)), sex = rep(2, round(prop.w[j, i+1] * NewN)), age = rep(range(data$age)[1] - 1 + j, round(prop.w[j, i+1] * NewN)))
       NewSet_Total <- rbind(NewSet_Total, NewSet1, NewSet2)
     }
   }

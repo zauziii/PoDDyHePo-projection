@@ -1,0 +1,12 @@
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(bibtype = "Manual",
+         title = "{csprojections}: Projection Method for PoDDy-HePo Project Using Multiple Imputation",
+         author = c(person("Zhi", "Zhou"),
+                    person("Jaakko", "Reinikainen"),
+                    person("Tommi", "Härkänen"),
+                    person("Hanna", "Tolonen"),
+                    person("et al")),
+         year = 2022,
+         note = note,
+         url = "https://doi.org/10.5281/zenodo.6335144")

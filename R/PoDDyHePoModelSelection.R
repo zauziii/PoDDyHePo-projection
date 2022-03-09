@@ -24,6 +24,7 @@
 #' 
 #' @importFrom magrittr %>% 
 #' @importFrom splines ns
+#' @importFrom stringi stri_replace_all_regex
 #' 
 #' @export
 
@@ -31,71 +32,80 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
   
   ## If NsVar is not null, create replaced variables for main effects and interaction term
   if(!is.null(NsVar)){
-    Ns <- fix.var <- replace <- list()
+    Ns <- list()
+    replace <- data.frame(matrix(NA, max(length(df)+1, 2), length(NsVar)))
+    fix.var <- data.frame(matrix(NA, max(length(df)+1, 2), length(f.var)))
     Ns[[1]] <- names(imp$data)
     if(is.null(f.var)){
-      fix.var[[1]] <- list(NULL)
+      fix.var[1, ] <- list(NULL)
     } else{
-      fix.var[[1]] <- f.var
+      fix.var[1, ] <- f.var
     }
     
     ## knots= specified
     if(!is.null(knots)){
       if(is.null(b.knots)){
         if(!is.null(knots)){
-          replace[[max(length(df)+1, 2)]] <- paste0("splines::ns(", NsVar, ",knots=", paste0("c(",paste0(knots, collapse = ", "),")"), ")")
+          replace[max(length(df)+1, 2), ] <- paste0("splines::ns(", NsVar, 
+                                                    ",knots=", "c(", knots, ")", ")")
         }
       } else{
-        replace[[max(length(df)+1, 2)]] <- paste0("splines::ns(", NsVar, ",knots=", paste0("c(",paste0(knots, collapse = ", "),")"), ",Boundary.knots=", paste0("c(",paste0(b.knots, collapse = ", "),")"), ")")
+        replace[max(length(df)+1, 2), ] <- paste0("splines::ns(", NsVar, 
+                                                  ",knots=", paste0("c(", knots ,")"), 
+                                                  ",Boundary.knots=", b.knots, ")")
         if(!is.null(df)){
           cat("NOTE: Both knots= and b.knots= specified, df ignored")
         } 
       }
     }
     
+    
     ## df= specified
     if(is.null(knots) & !is.null(df)){
       for (i in 2:(length(df)+1)) {
-        replace[[i]] <- paste0("splines::ns(", NsVar, ",df=", df[i-1], ")")
+        replace[i, ] <- paste0("splines::ns(", NsVar, ",df=", df[i-1], ")")
       }
     }
     
     ## If df= and knots= not specified
     if(is.null(df) && is.null(knots)){
-      cat("NOTE: Both df= and knots= are missing, input as least one of them")
-    }
-    
-    ## If NsVar=NULL, df=, knots= and b.knots= ignored
-    if(is.null(NsVar) && any(!is.null(df), !is.null(knots), !is.null(b.knots))){
-      cat("NOTE: NsVar= not specified, ignored df=, knots= and b.knots=")
+      stop("NOTE: Both df= and knots= are missing, input as least one of them")
     }
     
     for (i in 2:max((length(df)+1),2)){
       Ns[[i]] <- names(imp$data)
-      Ns[[i]][Ns[[i]] == NsVar] <- replace[[i]]
+      for (j in 1:length(NsVar)) {
+        Ns[[i]][Ns[[i]] == NsVar[j]] <- replace[i, j]
+      }
       
       if(is.null(f.var)){
-        fix.var[[i]] <- list(NULL)
+        fix.var[i, ] <- NA
       } else{
-        fix.var[[i]] <- Ns[[i]][which(f.var %in% names(imp$data))]
+        fixvars <- Ns[[i]][which(f.var %in% names(imp$data))]
         # If NsVar is in the interaction term, replace it and attach to f.var2,
-        #  otherwise, attach it f.var2 without replacement.
-        if(length(grepl(paste0(".*", NsVar), f.var[which(!f.var %in% names(imp$data))])) != 0){
-          fix.var[[i]] <- append(fix.var[[i]], gsub(NsVar, replace[[i]], f.var[which(!f.var %in% names(imp$data))]))
+        
+        if(grepl(paste0(".*", NsVar, collapse = "|"), f.var[which(!f.var %in% names(imp$data))])){
+          fix.var[i, ] <- append(fixvars, stringi::stri_replace_all_regex(f.var[which(!f.var %in% names(imp$data))], 
+                                                                          NsVar, 
+                                                                          replace[2, ], 
+                                                                          vectorize = F))
         } else{
-          fix.var[[i]] <- append(fix.var[[i]], f.var[which(!f.var %in% names(imp$data))])
-        }
+          fix.var[i, ] <- append(fixvars, f.var[which(!f.var %in% names(imp$data))])
+        } 
       }
+      
     }
   } else{
+    ## If NsVar=NULL, df=, knots= and b.knots= ignored
+    cat("NOTE: NsVar= not specified, ignored df=, knots= and b.knots=")
+    
     Ns[[1]] <- names(imp$data)
     if(is.null(f.var)){
-      fix.var[[1]] <- list(NULL) 
+      fix.var[1, ] <- list(NULL) 
     } else{
-      fix.var[[1]] <- f.var
+      fix.var[1, ] <- f.var
     }
   }
-  
   
   # Model Selection for each imputed data set
   model_selection <- function(imp, x_vars, y_var, fixed_vars) {
@@ -134,7 +144,7 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
   
   for (i in 1:m) {
     ## Fit model for each impute data set
-    fit[[i]] <- model_selection(imp, Ns[[i]][Ns[[i]]!=DV], DV, fix.var[[i]])
+    fit[[i]] <- model_selection(imp, Ns[[i]][Ns[[i]]!=DV], DV, fix.var[i, ])
     
     ## Compute Mean BIC
     BIC[[i]] <- fit[[i]]$analyses %>% sapply(BIC) %>% mean()
@@ -166,10 +176,14 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
     if(!is.null(knots)){
       if(is.null(b.knots)){
         if(!is.null(knots)){
-          names(info$`Mean BIC`) <- names(info$`Selected Models`) <- c("Non-splines", paste0("knots=",paste0("c(",paste0(knots, collapse = ", "),")")))
+          names(info$`Mean BIC`) <- names(info$`Selected Models`) <- c("Non-splines", 
+                                                                       paste0("ns(", NsVar, 
+                                                                              ",knots=", "c(", knots, ")", ")"))
         }
       } else{
-        names(info$`Mean BIC`) <- names(info$`Selected Models`) <- c("Non-splines", paste0("knots=",paste0("c(",paste0(knots, collapse = ", "),")"), ",Boundary.knots=", paste0("c(",paste0(b.knots, collapse = ", "),")")))
+        names(info$`Mean BIC`) <- names(info$`Selected Models`) <- c("Non-splines", paste0("ns(", NsVar, 
+                                                                                           ",knots=", paste0("c(", knots ,")"), 
+                                                                                           ",Boundary.knots=", b.knots, ")", collapse = " & "))
       }
     }
     
@@ -186,4 +200,3 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
   
   return(info)
 }
-

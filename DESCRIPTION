@@ -1,9 +1,13 @@
-Package: PoDDyHePoProjection
+Package: csprojections
 Type: Package
-Title: Projection Method for PoDDyHePo Project
-Version: 0.1.0
-Author: Zhi Zhou
-Maintainer: Zhi Zhou <zhi.zhou@thl.fi>
+Title: Projection Method for PoDDy-HePo Project
+Version: 1.0.0
+Authors@R: 
+    c(person("Zhi", "Zhou", email = "zhi.zhou@thl.fi", role = c("cre", "aut")),
+      person("Jaakko", "Reinikainen", role = "aut"),
+      person("Tommi", "Härkänen", role = "aut"),
+      person("Hanna", "Tolonen", role = "aut"),
+      person("et al", role = "ctb"))
 Description: This package includes some useful functions for PoDDy-HePo Project.
 License: GPL-3
 Encoding: UTF-8
@@ -21,6 +25,7 @@ Imports:
     plyr,
     qwraps2,
     fastDummies,
-    splines
+    splines,
+    stringi
 RoxygenNote: 7.1.2
 
