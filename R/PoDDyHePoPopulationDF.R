@@ -7,8 +7,8 @@
 #' @details 
 #'
 #' @param data Well-formatted data. 
-#' @param file Population forcasts from statistic Finland.
-#' @param size Size of sample to be projected
+#' @param file Population forecasts from statistic Finland. If you are not using population forecasts from statistics Finland, follow the guidelines to create one.
+#' @param size Size of samples to be projected
 #' @param y2pred years that need to be projected.
 #'
 #'

@@ -3,7 +3,7 @@
 \docType{data}
 \name{testdata}
 \alias{testdata}
-\title{Synthetic data for model selection}
+\title{Synthetic data for PoDDy-HePo project}
 \description{
-Synthetic data for model selection
+Synthetic data for PoDDy-HePo project
 }

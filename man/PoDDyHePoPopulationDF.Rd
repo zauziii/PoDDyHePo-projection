@@ -9,9 +9,9 @@ PoDDyHePoPopulationDF(data, file, size, y2pred)
 \arguments{
 \item{data}{Well-formatted data.}
 
-\item{file}{Population forcasts from statistic Finland.}
+\item{file}{Population forecasts from statistic Finland. If you are not using population forecasts from statistics Finland, follow the guidelines to create one.}
 
-\item{size}{Size of sample to be projected}
+\item{size}{Size of samples to be projected}
 
 \item{y2pred}{years that need to be projected.}
 }

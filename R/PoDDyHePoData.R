@@ -1,4 +1,4 @@
-#' Synthetic data for model selection
+#' Synthetic data for PoDDy-HePo project
 #' 
 #' @docType data
 #' @name testdata

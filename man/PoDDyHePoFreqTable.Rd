@@ -7,9 +7,9 @@
 PoDDyHePoFreqTable(data, colName)
 }
 \arguments{
-\item{data}{A data frame. It could the well-formatted data, or the data frame whose prevalences are to be estimated.}
+\item{data}{A data frame. It could be the well-formatted data, or the data frame whose prevalences are to be estimated.}
 
-\item{colName}{A column that you want to creat a frequency table for.}
+\item{colName}{A column that you want to create a frequency table for.}
 }
 \value{
 a table

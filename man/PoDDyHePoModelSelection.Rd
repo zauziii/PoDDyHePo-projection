@@ -34,7 +34,7 @@ Returns a list with 4 elements: Models, Mean BIC, Selected Models and Suggested 
 }
 \description{
 PoDDyHePoModelSelection returns a list of 4 elements: 
-             Models (Recoreds all selected models of each imputed data set), 
+             Models (Records all selected models of each imputed data set), 
              Mean BIC (Records Mean BIC of each round of imputation),
              Selected Models (Records a selected model/selected models over imputation of cases)
              Suggested Model (Records a suggested model with smaller BIC value)
@@ -43,6 +43,6 @@ PoDDyHePoModelSelection returns a list of 4 elements:
 Description of PoDDyHePoModelSelection()
 
 When NsVar = NULL, there is only one BIC value in Mean BIC and one model in Selected Models, the model in Selected Models is the same as in Suggested Model.
-         df or knots should be deined.
+         df or knots should be denied.
          When both knots and b.knots are specified, df will be ignored.
 }

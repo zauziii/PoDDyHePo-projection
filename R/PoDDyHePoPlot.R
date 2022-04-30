@@ -4,14 +4,15 @@
 #'
 #' @description It plots the prevalences against survey year.
 #'
-#' @details Enables plotting even there is a variable whose porprotion of each category has been calculated.
+#' @details Enables plotting even there is a variable whose proportion of each category has been calculated.
 #'
 #' @param data A data frame from PoDDyHePoPool.
-#' @param year The maximum year in the obseved data.
-#' @param title The tile of the plot. It changes due to we will have different reponse variable.
+#' @param year The maximum year in the observed data.
+#' @param grplabels The labels of grouping variable. By default, grplabels = c("Men", "Women").
+#' @param title The tile of the plot. It changes due to we will have different response variable.
 #' @param y_min minimum value of y-axis(in percentage). For example, if 10 percent is the minimum value of y-axis, then type let y_min = 10.
-#' @param y_max maximum value of y-axis(in percentage). Let y_max = 75, if 75 percent is the maximun value of y-axis.
-#' @param sepvarlbl Lable of the variable whose porprotion of each category has been calculated. The default is \code{NULL}. Accoring to dummy_cols, the separated variables will be in the name for example obe_0, obe_1, obe_2, if we taking obe for example. To label, sepvarlbl = c("Normal Weight", "Over Weight", "Obesity"). As the levels are sorted, so please make sure that the labels are in right order. 
+#' @param y_max maximum value of y-axis(in percentage). Let y_max = 75, if 75 percent is the maximum value of y-axis.
+#' @param sepvarlbl Label of the variable whose proportion of each category has been calculated. The default is \code{NULL}. According to dummy_cols, the separated variables will be in the name for example obe_0, obe_1, obe_2, if we taking obe for example. To label, sepvarlbl = c("Normal Weight", "Over Weight", "Obesity"). As the levels are sorted, so please make sure that the labels are in right order. 
 #'
 #'
 #' @return Returns a figure
@@ -20,10 +21,20 @@
 #' @import ggplot2
 
 
-PoDDyHePoPlot <- function(data, year, title, y_min, y_max, sepvarlbl = NULL){
+PoDDyHePoPlot <- function(data, year, grplabels = c("Men", "Women"), title, y_min, y_max, sepvarlbl = NULL){
   
-  # 
-  if(nrow(data) != length(unique(data$Year)) * 2 ){
+  # Rename variables
+  if(ncol(data) != 5){
+    colnames(data) <- c("Year", "grpVar", "EST", "CI_LOWER", "CI_UPPER", "Group")
+  } else{
+    colnames(data) <- c("Year", "grpVar", "EST", "CI_LOWER", "CI_UPPER")
+  }
+  
+  if(is.null(grplabels)){
+    grplabels <- sort(unique(data$grpVar))
+  }
+  
+  if(nrow(data) != (length(unique(data$Year)) * length(unique(data$grpVar)))){
     
     # Levels for seperated variable
     levels <- sort(unique(data$Group))
@@ -37,14 +48,14 @@ PoDDyHePoPlot <- function(data, year, title, y_min, y_max, sepvarlbl = NULL){
                          labels = sepvarlbl,
                          levels = levels)
     
-    # Label Sex
-    data$Sex <- factor(data$Sex,
-                       levels = c(1, 2),
-                       labels = c("Men", "Women"))
+    # Label grouping variable
+    data$grpVar <- factor(data$grpVar,
+                          levels = sort(unique(data$grpVar)),
+                          labels = grplabels)
     
     # Plot
-    ggplot(data = data[data$Year <= year, ], aes(x = .data$Year, y = 100 * .data$EST, color = .data$Sex, group = .data$Group)) +
-      geom_point(aes(fill = .data$Sex, shape = .data$Group), size = 2.5, position = position_dodge(width = 2.5)) +
+    ggplot(data = data[data$Year <= year, ], aes(x = .data$Year, y = 100 * .data$EST, color = .data$grpVar, group = .data$Group)) +
+      geom_point(aes(fill = .data$grpVar, shape = .data$Group), size = 2.5, position = position_dodge(width = 2.5)) +
       geom_point(aes(shape = .data$Group), data = data[data$Year > year, ], size = 2.5, position = position_dodge(width = 2.5)) +
       geom_line(size = 0.65, position = position_dodge(width = 2.5)) +
       geom_line(data = data[data$Year >= year, ], linetype = "dashed", size = 0.65, position = position_dodge(width = 2.5)) +
@@ -65,12 +76,12 @@ PoDDyHePoPlot <- function(data, year, title, y_min, y_max, sepvarlbl = NULL){
                          labels = sepvarlbl,
                          values = c(21, 24, 22, 23, 25)) + 
       scale_fill_manual(guide = "none",
-                        values = c("blue", "red")) +
+                        values = c("blue", "red", "black", "#61D04F", "#28E2E5", "#CD0BBC", "#F5C710", "gray62")) +
       ggtitle(title) +
       facet_wrap( ~ Sex) +
       scale_color_manual(name = " ",
                          labels = c("Men", "Women"),
-                         values = c("blue", "red"),
+                         values = c("blue", "red", "black", "#61D04F", "#28E2E5", "#CD0BBC", "#F5C710", "gray62"),
                          guide = "none") + 
       theme_bw() + 
       theme(plot.title = element_text(hjust = 0.5 ,margin = margin(5, 0, 15, 0), size = 28),
@@ -89,11 +100,11 @@ PoDDyHePoPlot <- function(data, year, title, y_min, y_max, sepvarlbl = NULL){
   } else{
     
     # Plot (not seperated variable)
-    ggplot(data = data[data$Year <= year, ], aes(x = .data$Year, y = 100 * .data$EST, color = .data$Sex)) +
+    ggplot(data = data[data$Year <= year, ], aes(x = .data$Year, y = 100 * .data$EST, color = .data$grpVar)) +
       geom_line(size = 0.65, position = position_dodge(width = 1.5)) +
       geom_line(data = data[data$Year >= year, ], linetype = "dashed", size = 0.65, position = position_dodge(width = 1.5)) +
-      geom_point(aes(fill = .data$Sex, shape = .data$Sex), size = 3, position = position_dodge(width = 1.5)) +
-      geom_point(aes(shape = .data$Sex), data = data[data$Year > year, ], size = 3, position = position_dodge(width = 1.5)) +
+      geom_point(aes(fill = .data$grpVar, shape = .data$grpVar), size = 3, position = position_dodge(width = 1.5)) +
+      geom_point(aes(shape = .data$grpVar), data = data[data$Year > year, ], size = 3, position = position_dodge(width = 1.5)) +
       geom_errorbar(aes(ymin = 100 * .data$CI_LOWER,
                         ymax = 100 * .data$CI_UPPER),
                     width = 1.5,
@@ -108,13 +119,13 @@ PoDDyHePoPlot <- function(data, year, title, y_min, y_max, sepvarlbl = NULL){
                          breaks = c(seq(0, floor(y_max/10)*10, 10), y_max)) +
       scale_x_continuous(breaks = unique(data$Year)) +
       scale_color_manual(name = " ",
-                         labels = c("Men", "Women"),
-                         values = c("blue", "red")) + 
+                         labels = grplabels,
+                         values = c("blue", "red", "black", "#61D04F", "#28E2E5", "#CD0BBC", "#F5C710", "gray62")) + 
       scale_shape_manual(name = " ",
-                         labels = c("Men", "Women"),
-                         values = c(21, 24)) + 
+                         labels = grplabels,
+                         values = c(21, 24, 22, 23, 25)) + 
       scale_fill_manual(guide = "none",
-                        values = c("blue", "red")) +
+                        values = c("blue", "red", "black", "#61D04F", "#28E2E5", "#CD0BBC", "#F5C710", "gray62")) +
       theme_bw() +
       ggtitle(title) +
       theme(plot.title = element_text(hjust = 0.5 ,margin = margin(5, 0, 15, 0), size = 28),

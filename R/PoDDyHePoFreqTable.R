@@ -5,8 +5,8 @@
 #'
 #' @details The table includes total, respondents (N) and its proportion (%).
 #'
-#' @param data A data frame. It could the well-formatted data, or the data frame whose prevalences are to be estimated.
-#' @param colName A column that you want to creat a frequency table for.
+#' @param data A data frame. It could be the well-formatted data, or the data frame whose prevalences are to be estimated.
+#' @param colName A column that you want to create a frequency table for.
 #'
 #'
 #' @return a table

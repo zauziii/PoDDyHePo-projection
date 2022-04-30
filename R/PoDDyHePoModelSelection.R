@@ -3,13 +3,13 @@
 #' @title Model Selection Function Developed for PoDDy-HePo Project (BIC based)
 #'
 #' @description PoDDyHePoModelSelection returns a list of 4 elements: 
-#'              Models (Recoreds all selected models of each imputed data set), 
+#'              Models (Records all selected models of each imputed data set), 
 #'              Mean BIC (Records Mean BIC of each round of imputation),
 #'              Selected Models (Records a selected model/selected models over imputation of cases)
 #'              Suggested Model (Records a suggested model with smaller BIC value)
 #' 
 #' @details When NsVar = NULL, there is only one BIC value in Mean BIC and one model in Selected Models, the model in Selected Models is the same as in Suggested Model.
-#'          df or knots should be deined.
+#'          df or knots should be denied.
 #'          When both knots and b.knots are specified, df will be ignored.
 #'
 #' @param imp An object of class \code{mids} (produced by \code{mice()}.
@@ -30,7 +30,7 @@
 
 PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NULL, b.knots = NULL, f.var = NULL){
   
-  ## If NsVar is not null, create replaced variables for main effects and interaction term
+  # If NsVar is not null, create replaced variables for main effects and interaction term
   if(!is.null(NsVar)){
     Ns <- list()
     replace <- data.frame(matrix(NA, max(length(df)+1, 2), length(NsVar)))
@@ -42,7 +42,7 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
       fix.var[1, ] <- f.var
     }
     
-    ## knots= specified
+    # knots= specified
     if(!is.null(knots)){
       if(is.null(b.knots)){
         if(!is.null(knots)){
@@ -60,14 +60,14 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
     }
     
     
-    ## df= specified
+    # df= specified
     if(is.null(knots) & !is.null(df)){
       for (i in 2:(length(df)+1)) {
         replace[i, ] <- paste0("splines::ns(", NsVar, ",df=", df[i-1], ")")
       }
     }
     
-    ## If df= and knots= not specified
+    # If df= and knots= not specified
     if(is.null(df) && is.null(knots)){
       stop("NOTE: Both df= and knots= are missing, input as least one of them")
     }
@@ -96,7 +96,7 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
       
     }
   } else{
-    ## If NsVar=NULL, df=, knots= and b.knots= ignored
+    # If NsVar=NULL, df=, knots= and b.knots= ignored
     cat("NOTE: NsVar= not specified, ignored df=, knots= and b.knots=")
     
     Ns[[1]] <- names(imp$data)
@@ -133,7 +133,7 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
     }
   }
   
-  ## Model Fitting
+  # Model Fitting
   fit <- BIC <- selectedModels <- list()
   
   if(is.null(NsVar)){
@@ -166,10 +166,10 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
                selectedModels,
                suggestedModel)
   
-  ## Name the list elements
+  # Name the list elements
   names(info) <- c("Models", "Mean BIC", "Selected Models", "Suggested Model")
   
-  ## Name sublist
+  # Name sublist
   if(!is.null(NsVar)){
     
     ## knots= specified
@@ -187,7 +187,7 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
       }
     }
     
-    ## df= specified
+    # df= specified
     if(is.null(knots) & !is.null(df)){
       for (i in 2:(length(df)+1)) {
         names(info$`Mean BIC`) <- names(info$`Selected Models`) <- c("Non-splines", paste0("DF=",df))
