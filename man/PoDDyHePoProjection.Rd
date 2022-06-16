@@ -15,17 +15,17 @@ PoDDyHePoProjection(data, m = 5, maxit = 10, printFlag = F, ...)
 
 \item{printFlag}{If `TRUE`, `mice` will print history on console. Use `print=FALSE` for silent computation.}
 
-\item{...}{Formulas. Formulas.}
+\item{...}{Formulas.}
 }
 \value{
 Returns an S3 object of class \code{\link[=mids-class]{mids}}
        (multiply imputed data set)
 }
 \description{
-PoDDyHePoProjection is the main body for projection. It projects projects individual-level values of the variables using multiple imputation.
+PoDDyHePoProjection() is the main body for projection. It projects individual-level values of the variables using multiple imputation.
 }
 \details{
 Description of PoDDyHePoProjection()
 
-It allows people to set up a variable whose proportion of each category needs to be calculated and returns a \code{\link[=mids-class]{mids}} object.
+It allows user to set up basic settings like number of multiple imputations(\code{m}), number of iterations(\code{maxit}) and whether to show the history(\code{printFlag}). It returns a \code{\link[=mids-class]{mids}} object if and only if when every variable with missingess has given a formula.
 }

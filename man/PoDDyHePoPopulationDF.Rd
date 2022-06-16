@@ -2,7 +2,7 @@
 % Please edit documentation in R/PoDDyHePoPopulationDF.R
 \name{PoDDyHePoPopulationDF}
 \alias{PoDDyHePoPopulationDF}
-\title{Population Forecasts Function Developed for PoDDy-HePo Project}
+\title{Function Developed to Join Population Forecats and Units Needs To Be Projected for PoDDy-HePo Project}
 \usage{
 PoDDyHePoPopulationDF(data, file, size, y2pred)
 }
@@ -11,7 +11,7 @@ PoDDyHePoPopulationDF(data, file, size, y2pred)
 
 \item{file}{Population forecasts from statistic Finland. If you are not using population forecasts from statistics Finland, follow the guidelines to create one.}
 
-\item{size}{Size of samples to be projected}
+\item{size}{Size of samples to be projected.}
 
 \item{y2pred}{years that need to be projected.}
 }
@@ -19,7 +19,7 @@ PoDDyHePoPopulationDF(data, file, size, y2pred)
 a data frame
 }
 \description{
-PoDDyHePoPopulationDF returns a data frame with data needs to be projected.
+PoDDyHePoPopulationDF returns a data frame with units need to be projected.
 }
 \details{
 Description of PoDDyHePoPopulationDF()

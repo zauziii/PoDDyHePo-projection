@@ -7,7 +7,7 @@
 PoDDyHePoPlot(
   data,
   year,
-  grplabels = c("Men", "Women"),
+  grplabels = NULL,
   title,
   y_min,
   y_max,
@@ -15,19 +15,19 @@ PoDDyHePoPlot(
 )
 }
 \arguments{
-\item{data}{A data frame from PoDDyHePoPool.}
+\item{data}{A data frame from `PoDDyHePoPool()`.}
 
 \item{year}{The maximum year in the observed data.}
 
-\item{grplabels}{The labels of grouping variable. By default, grplabels = c("Men", "Women").}
+\item{grplabels}{The labels of grouping variable. By default, grplabels = NULL. In our case, grplabels = c("Men", "Women").}
 
-\item{title}{The tile of the plot. It changes due to we will have different response variable.}
+\item{title}{Title for the plot. It changes due to different response variable.}
 
 \item{y_min}{minimum value of y-axis(in percentage). For example, if 10 percent is the minimum value of y-axis, then type let y_min = 10.}
 
 \item{y_max}{maximum value of y-axis(in percentage). Let y_max = 75, if 75 percent is the maximum value of y-axis.}
 
-\item{sepvarlbl}{Label of the variable whose proportion of each category has been calculated. The default is \code{NULL}. According to dummy_cols, the separated variables will be in the name for example obe_0, obe_1, obe_2, if we taking obe for example. To label, sepvarlbl = c("Normal Weight", "Over Weight", "Obesity"). As the levels are sorted, so please make sure that the labels are in right order.}
+\item{sepvarlbl}{Labels of the variable whose proportion of each category has been calculated. The default is \code{NULL}. If it is \code{NULL}, the name of variable will then be like obe_0, obe_1, obe_2 take our case for example. If it is labelled, as the levels are sorted, please make sure that the labels are in right order.}
 }
 \value{
 Returns a figure

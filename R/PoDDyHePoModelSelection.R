@@ -18,7 +18,7 @@
 #' @param df Degrees of freedom. The default is \code{df=NULL}.  
 #' @param knots Breakpoints that define the spline.
 #' @param b.knots Boundary points at which to impose the natural boundary conditions and anchor the B-spline basis (default the range of the data).
-#' @param f.var Fixed variables. Variables that would like to fix it the model (will not be removed by stepwise process).
+#' @param f.var Fixed variables. Variables that are fixed in the model (will not be removed by stepwise process).
 #'
 #' @return Returns a list with 4 elements: Models, Mean BIC, Selected Models and Suggested Model.
 #' 
@@ -81,7 +81,7 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
       if(is.null(f.var)){
         fix.var[i, ] <- NA
       } else{
-        fixvars <- Ns[[i]][which(f.var %in% names(imp$data))]
+        fixvars <- Ns[[i]][which(names(imp$data) %in% f.var)]
         # If NsVar is in the interaction term, replace it and attach to f.var2,
         
         if(grepl(paste0(".*", NsVar, collapse = "|"), f.var[which(!f.var %in% names(imp$data))])){
@@ -101,8 +101,10 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
     
     Ns[[1]] <- names(imp$data)
     if(is.null(f.var)){
+      fix.var <- data.frame()
       fix.var[1, ] <- list(NULL) 
     } else{
+      fix.var <- data.frame(matrix(NA, 1, length(f.var)))
       fix.var[1, ] <- f.var
     }
   }
@@ -149,10 +151,10 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL, knots = NU
     ## Compute Mean BIC
     BIC[[i]] <- fit[[i]]$analyses %>% sapply(BIC) %>% mean()
     
-    ## Index of the minimun Mean BIC
+    ## Index of the minimum Mean BIC
     idx <- which.min(BIC)
     
-    ## Selected moldes from each imputed data set
+    ## Selected models from each imputed data set
     selectedModels[[i]] <- fit[[i]]$analyses[[fit[[i]] $analyses %>% sapply(BIC) %>% which.min()]]$formula
     
     ## Suggested model

@@ -27,7 +27,7 @@ PoDDyHePoModelSelection(
 
 \item{b.knots}{Boundary points at which to impose the natural boundary conditions and anchor the B-spline basis (default the range of the data).}
 
-\item{f.var}{Fixed variables. Variables that would like to fix it the model (will not be removed by stepwise process).}
+\item{f.var}{Fixed variables. Variables that are fixed in the model (will not be removed by stepwise process).}
 }
 \value{
 Returns a list with 4 elements: Models, Mean BIC, Selected Models and Suggested Model.

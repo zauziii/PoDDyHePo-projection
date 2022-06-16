@@ -15,7 +15,7 @@ PoDDyHePoFreqTable(data, colName)
 a table
 }
 \description{
-It returns a table arranged by Gender and Year.
+It returns a table arranged by Year and Sex.
 }
 \details{
 Description of PoDDyHePoFreqTable()

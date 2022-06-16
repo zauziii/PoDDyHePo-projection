@@ -4,16 +4,14 @@
 \alias{PoDDyHePoPool}
 \title{Pool Function Developed for PoDDy-HePo project.}
 \usage{
-PoDDyHePoPool(imp, colName, grpVar = "sex", sep_col = NULL)
+PoDDyHePoPool(imp, colName, grpVar = NULL)
 }
 \arguments{
 \item{imp}{Complete data (mids object) from PoDDyHePoProjeciton().}
 
 \item{colName}{A variable whose prevalences are to be estimated.}
 
-\item{grpVar}{Grouping variable. In our case, "sex" used as grouping variable.}
-
-\item{sep_col}{A variable (usually has 3 levels or more) to be calculated its proportion.}
+\item{grpVar}{Grouping variable. The default is NULL. In our case, "sex" used as grouping variable, that is grpVar = "sex".}
 }
 \value{
 Returns a data frame ready for plotting.
