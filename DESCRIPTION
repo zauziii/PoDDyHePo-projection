@@ -1,6 +1,6 @@
-Package: csprojections
+Package: poddyhepo
 Type: Package
-Title: Health Indicator Projections from Repeated Cross-Sectional Surveys
+Title: Population Health Projections for the PoDDy-HePo Project
 Version: 1.1.0
 Authors@R: c(
     person("Zhi", "Zhou", email = "zhi.zhou@thl.fi", role = c("cre", "aut")),
@@ -11,7 +11,9 @@ Description: Prepare synthetic future populations from age-sex forecasts,
     compare projection models by the Bayesian information criterion, project
     health indicators using chained-equations multiple imputation, and
     summarise and plot pooled prevalences. Includes input validation,
-    reproducible examples, and modified Wilson confidence intervals.
+    reproducible examples, and modified Wilson confidence intervals. Developed
+    from the PoDDy-HePo project on projections of disease and disability burden
+    in Finland and their implications for health policy.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -29,4 +31,4 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.1

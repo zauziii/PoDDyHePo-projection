@@ -1,11 +1,11 @@
 note <- sprintf("R package version %s", meta$Version)
 
 bibentry(bibtype = "Manual",
-         title = "{csprojections}: Projection Method for PoDDy-HePo Project Using Multiple Imputation",
+         title = "{poddyhepo}: Population Health Projections for the PoDDy-HePo Project",
          author = c(person("Zhi", "Zhou"),
                     person("Jaakko", "Reinikainen"),
                     person("Tommi", "Härkänen"),
                     person("Hanna", "Tolonen")),
-         year = 2022,
+         year = 2026,
          note = note,
          url = "https://doi.org/10.5281/zenodo.6333982")

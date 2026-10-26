@@ -54,7 +54,8 @@ PoDDyHePoPlot <- function(data, year, grplabels = NULL, title = NULL,
   if (is.null(group_var) && !is.null(grplabels)) warning("`grplabels` ignored for ungrouped data.", call. = FALSE)
   d$.colour <- if (category) .plot_labels(d$Group, sepvarlbl, "sepvarlbl") else d$.facet
   if (!category && !is.null(sepvarlbl)) warning("`sepvarlbl` ignored for a single outcome category.", call. = FALSE)
-  d$.series <- interaction(d$.facet, d$.colour, drop = TRUE)
+  # Numeric level IDs avoid collisions such as a/b.c and a.b/c.
+  d$.series <- interaction(as.integer(d$.facet), as.integer(d$.colour), drop = TRUE)
   if (anyDuplicated(d[c("Year", ".series")])) stop("Duplicate year-series rows cannot be plotted.", call. = FALSE)
   d <- d[order(d$.series, d$Year), , drop = FALSE]
   observed <- d[d$Year <= year, , drop = FALSE]

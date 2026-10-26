@@ -1,7 +1,7 @@
-# A short, reproducible workflow. Run after installing csprojections.
-library(csprojections)
+# A short, reproducible workflow. Run after installing poddyhepo.
+library(poddyhepo)
 
-data(testdata, package = "csprojections")
+data(testdata, package = "poddyhepo")
 survey <- testdata[c("year", "sex", "age", "smo")]
 
 # 1. Describe missingness. The result can be written to CSV.
@@ -18,7 +18,7 @@ print(selection$`Candidate BIC`)
 
 # 3. This is a 2019-vintage population forecast, for demonstration only.
 forecast_file <- system.file("extdata", "003_128v_2040_20210730-015759.csv",
-                              package = "csprojections")
+                              package = "poddyhepo")
 future <- PoDDyHePoPopulationDF(
   survey, file = forecast_file, size = 400, y2pred = c(2030, 2040))
 

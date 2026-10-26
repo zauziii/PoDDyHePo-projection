@@ -1,4 +1,18 @@
-# csprojections 1.1.0
+# poddyhepo 1.1.0
+
+* Rename the R package from `csprojections` to `poddyhepo` and use the title
+  "Population Health Projections for the PoDDy-HePo Project". Keep all six
+  public `PoDDyHePo*` function names. Update installation paths, examples,
+  tests and citation metadata, using the existing all-versions Zenodo DOI.
+* Expand regression checks for all public functions and both historical and
+  current dependencies. Reject incompatible outcome encodings across completed
+  data sets, ignore irrelevant row-name differences when checking pooling keys,
+  and guard rounding at confidence-interval boundaries.
+* Use numeric series identifiers so punctuation in plot labels cannot merge
+  distinct groups. Preserve logical sex codes when appending population rows.
+* Accept dot formulas in projection and reject self-predicting targets. Report
+  non-finite model inputs, constant candidate predictors and inconsistent factor
+  levels before fitting. Honour quiet multinomial stepwise selection.
 
 Development upgrade reconstructed from the supplied 1.0.0 text snapshot.
 Not an upstream or CRAN release.

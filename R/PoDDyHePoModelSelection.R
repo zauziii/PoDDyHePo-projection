@@ -63,6 +63,25 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL,
   if (any(vapply(datasets, function(d) anyNA(d[used]), logical(1)))) {
     stop("Complete outcome and candidate predictors before selecting models.", call. = FALSE)
   }
+  for (variable in used) {
+    types <- vapply(datasets, function(d) .column_type(d[[variable]]), character(1))
+    if (any(types == "unsupported") || any(types != types[1L])) {
+      stop("Model variable types must match and be supported: ", variable, ".", call. = FALSE)
+    }
+    if (types[1L] == "numeric" && any(vapply(datasets, function(d)
+        any(!is.finite(d[[variable]])), logical(1)))) {
+      stop("Numeric model values must be finite: ", variable, ".", call. = FALSE)
+    }
+    if (types[1L] == "factor" && any(vapply(datasets, function(d)
+        !identical(levels(d[[variable]]), levels(first[[variable]])), logical(1)))) {
+      stop("Inconsistent factor levels for ", variable, ".", call. = FALSE)
+    }
+  }
+  for (variable in predictors) {
+    if (any(vapply(datasets, function(d) length(unique(d[[variable]])) < 2L, logical(1)))) {
+      stop("Constant candidate predictor: ", variable, ". Exclude it from `predictors`.", call. = FALSE)
+    }
+  }
   if (length(unique(first[[DV]])) < 2L) stop("Outcome needs at least two observed values.", call. = FALSE)
   if (family == "auto") {
     y <- first[[DV]]
@@ -171,8 +190,17 @@ PoDDyHePoModelSelection <- function(imp, DV, NsVar = NULL, df = NULL,
       dat <- datasets[[i]]
       initial <- if (direction == "backward") upper else lower
       fit <- .fit_projection_model(initial, dat, family)
-      fit <- stats::step(fit, scope = list(lower = lower, upper = upper),
-                         direction = direction, k = log(nrow(dat)), trace = as.integer(trace))
+      if (trace) {
+        fit <- stats::step(fit, scope = list(lower = lower, upper = upper),
+                           direction = direction, k = log(nrow(dat)), trace = 1)
+      } else {
+        # Some nnet add1 methods print even when step(trace = 0) is requested.
+        # Capture ordinary output while preserving warnings and errors.
+        invisible(utils::capture.output(
+          fit <- stats::step(fit, scope = list(lower = lower, upper = upper),
+                             direction = direction, k = log(nrow(dat)), trace = 0)
+        ))
+      }
       .check_fit(fit, family)
       fit
     })

@@ -27,7 +27,8 @@ PoDDyHePoProjection(
 
 \item{printFlag}{Whether to print iteration history.}
 
-\item{...}{Two-sided formulas, one per variable with missing values.}
+\item{...}{Two-sided formulas, one per variable with missing values.
+Dot notation such as \code{y ~ .} includes all other data columns.}
 
 \item{formulas}{Alternative named or unnamed list of formulas; do not also
 supply formulas in \code{...}.}

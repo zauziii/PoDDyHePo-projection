@@ -6,6 +6,7 @@
 #' @param maxit Positive integer number of iterations.
 #' @param printFlag Whether to print iteration history.
 #' @param ... Two-sided formulas, one per variable with missing values.
+#'   Dot notation such as `y ~ .` includes all other data columns.
 #' @param formulas Alternative named or unnamed list of formulas; do not also
 #'   supply formulas in `...`.
 #' @param seed Optional integer random seed.
@@ -59,7 +60,8 @@ PoDDyHePoProjection <- function(data, m = 5, maxit = 10, printFlag = FALSE, ...,
     as.character(f[[2L]])
   }, character(1))
   if (anyDuplicated(lhs)) stop("Duplicate response formulas.", call. = FALSE)
-  if (!is.null(names(formulas)) && any(nzchar(names(formulas)) & names(formulas) != lhs)) {
+  if (!is.null(names(formulas)) && (anyNA(names(formulas)) ||
+      any(nzchar(names(formulas)) & names(formulas) != lhs))) {
     stop("Formula list names must match their response columns.", call. = FALSE)
   }
   absent <- setdiff(targets, lhs)
@@ -70,8 +72,14 @@ PoDDyHePoProjection <- function(data, m = 5, maxit = 10, printFlag = FALSE, ...,
   names(formulas) <- lhs
   formulas <- formulas[targets]
   for (target in targets) {
+    if ("." %in% all.vars(formulas[[target]])) {
+      formulas[[target]] <- stats::formula(stats::terms(formulas[[target]], data = data))
+    }
     unknown <- setdiff(all.vars(formulas[[target]]), names(data))
     if (length(unknown)) stop("Unknown formula variables: ", paste(unknown, collapse = ", "), call. = FALSE)
+    if (target %in% all.vars(formulas[[target]][[3L]])) {
+      stop("An incomplete variable cannot predict itself: ", target, ".", call. = FALSE)
+    }
   }
   if (is.null(observed_until)) observed_until <- attr(data, "last_observed_year", exact = TRUE)
   ignore <- rep(FALSE, nrow(data))

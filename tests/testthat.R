@@ -1,3 +1,3 @@
 library(testthat)
-library(csprojections)
-test_check("csprojections")
+library(poddyhepo)
+test_check("poddyhepo")

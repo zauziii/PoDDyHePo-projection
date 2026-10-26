@@ -25,7 +25,7 @@
 #' @export
 #' @examples
 #' f <- system.file("extdata", "003_128v_2040_20210730-015759.csv",
-#'                  package = "csprojections")
+#'                  package = "poddyhepo")
 #' future <- PoDDyHePoPopulationDF(testdata, f, size = 500, y2pred = 2030)
 #' table(future$year)
 PoDDyHePoPopulationDF <- function(data, file = NULL, size, y2pred,
@@ -107,7 +107,8 @@ PoDDyHePoPopulationDF <- function(data, file = NULL, size, y2pred,
   future$sex <- if (is.factor(data$sex)) {
     factor(new$sex, levels = levels(data$sex), ordered = is.ordered(data$sex))
   } else if (is.integer(data$sex)) as.integer(new$sex) else
-    if (is.numeric(data$sex)) as.numeric(new$sex) else new$sex
+    if (is.numeric(data$sex)) as.numeric(new$sex) else
+      if (is.logical(data$sex)) as.logical(new$sex) else new$sex
   out <- rbind(data, future)
   rownames(out) <- NULL
   attr(out, "projection_rows") <- seq_len(nrow(out)) > nrow(data)

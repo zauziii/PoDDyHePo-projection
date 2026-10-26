@@ -1,7 +1,7 @@
 test_that("all public workflow functions are exported", {
   expect_true(all(c("PoDDyHePoFreqTable", "PoDDyHePoModelSelection",
                      "PoDDyHePoPopulationDF", "PoDDyHePoProjection",
-                     "PoDDyHePoPool", "PoDDyHePoPlot") %in% getNamespaceExports("csprojections")))
+                     "PoDDyHePoPool", "PoDDyHePoPlot") %in% getNamespaceExports("poddyhepo")))
 })
 
 test_that("projection completes future rows using explicit formulas and a seed", {

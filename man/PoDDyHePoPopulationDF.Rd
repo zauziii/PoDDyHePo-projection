@@ -55,7 +55,7 @@ rejected. The bundled 2019-vintage forecast is for demonstration only.
 }
 \examples{
 f <- system.file("extdata", "003_128v_2040_20210730-015759.csv",
-                 package = "csprojections")
+                 package = "poddyhepo")
 future <- PoDDyHePoPopulationDF(testdata, f, size = 500, y2pred = 2030)
 table(future$year)
 }

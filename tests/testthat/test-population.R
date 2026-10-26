@@ -42,7 +42,7 @@ test_that("invalid forecasts fail before making misleading populations", {
 })
 
 test_that("wide exports are read by year labels and reject ambiguity", {
-  f <- system.file("extdata", "003_128v_2040_20210730-015759.csv", package = "csprojections")
+  f <- system.file("extdata", "003_128v_2040_20210730-015759.csv", package = "poddyhepo")
   out <- PoDDyHePoPopulationDF(small_survey(), f, size = 17, y2pred = c(2040, 2025))
   expect_equal(sum(out$year == 2040), 17)
   expect_equal(sum(out$year == 2025), 17)

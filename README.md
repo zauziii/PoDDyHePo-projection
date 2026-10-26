@@ -1,9 +1,13 @@
-# csprojections
+# poddyhepo: Population Health Projections for the PoDDy-HePo Project
 
 Project health indicator prevalences from repeated cross-sectional surveys and
 age-sex population forecasts using chained-equations multiple imputation.
 
-This **1.1.0 development upgrade** retains the six `PoDDyHePo*` function names
+The package originates from the PoDDy-HePo project, "Projections of the burden
+of disease and disability in Finland - health policy prospects". Its functions
+provide the health-indicator projection workflow used in that setting.
+
+Previously named `csprojections`, this **1.1.0 development upgrade** retains the six `PoDDyHePo*` function names
 and repairs the workflow in the supplied 1.0.0 source snapshot. It has not been
 published to CRAN or pushed to GitHub. Read `NEWS.md` before comparing results
 with the earlier version: model selection, population allocation, factor
@@ -16,11 +20,11 @@ In R, first install the dependencies, then choose the supplied `.tar.gz` file:
 ```r
 install.packages(c("mice", "ggplot2", "nnet", "rlang"))
 install.packages(file.choose(), repos = NULL, type = "source")
-library(csprojections)
+library(poddyhepo)
 ```
 
 Alternatively, unpack the developer ZIP, open a terminal in its parent folder,
-and run `R CMD INSTALL csprojections`. The package contains no compiled code.
+and run `R CMD INSTALL poddyhepo`. The package contains no compiled code.
 R >= 4.1.0 and ggplot2 >= 3.4.0 are required. There is no need to attach
 `splines`, `dplyr`, or `mice` to use the six functions.
 
@@ -33,8 +37,8 @@ the published PoDDy-HePo estimates. The bundled population CSV is the original
 2019-vintage example forecast, not an updated official forecast.
 
 ```r
-library(csprojections)
-data(testdata, package = "csprojections")
+library(poddyhepo)
+data(testdata, package = "poddyhepo")
 survey <- testdata[c("year", "sex", "age", "smo")]
 
 # 1. Check response and missingness.
@@ -53,7 +57,7 @@ selection$`Selection frequency`
 
 # 3. Append exactly 400 synthetic people per future year.
 forecast_file <- system.file(
-  "extdata", "003_128v_2040_20210730-015759.csv", package = "csprojections"
+  "extdata", "003_128v_2040_20210730-015759.csv", package = "poddyhepo"
 )
 future <- PoDDyHePoPopulationDF(
   survey, file = forecast_file, size = 400, y2pred = c(2030, 2040)
@@ -80,7 +84,7 @@ recommended production settings. Increase them as needed and check convergence
 and sensitivity. An executable copy is installed at:
 
 ```r
-system.file("examples", "workflow.R", package = "csprojections")
+system.file("examples", "workflow.R", package = "poddyhepo")
 ```
 
 ## Survey and population formats
@@ -198,13 +202,13 @@ The original MIT-licensed MIWilson implementation is acknowledged in `inst/NOTIC
 
 ```r
 install.packages(c("testthat", "roxygen2"))
-testthat::test_local("csprojections")
-roxygen2::roxygenise("csprojections")
+testthat::test_local("poddyhepo")
+roxygen2::roxygenise("poddyhepo")
 ```
 
 ```sh
-R CMD build csprojections
-R CMD check --no-manual csprojections_1.1.0.tar.gz
+R CMD build poddyhepo
+R CMD check --no-manual poddyhepo_1.1.0.tar.gz
 ```
 
 The developer ZIP includes a GitHub Actions configuration to run package checks
@@ -216,5 +220,5 @@ have not been run as part of this local upgrade.
 The original R code was developed in the Projections of the burden of disease
 and disability in Finland – health policy prospects (PoDDy-HePo) project,
 funded by the Academy of Finland, grant 307907 (2017–2021). Existing authorship,
-GPL-3 licensing and the original citation entry are retained; placeholder
+GPL-3 licensing and the all-versions Zenodo DOI are retained; placeholder
 `et al` entries have been removed from machine-readable author metadata.

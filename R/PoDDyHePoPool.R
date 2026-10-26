@@ -57,12 +57,16 @@ PoDDyHePoPool <- function(imp, colName, grpVar = NULL, conf.level = 0.95,
     if (anyNA(d[c(keys, colName)])) {
       stop("Outcome, year and grouping values must be completed before pooling.", call. = FALSE)
     }
-    if (!identical(d[keys], data[keys])) {
+    if (!all(vapply(keys, function(key) identical(d[[key]], data[[key]]), logical(1)))) {
       stop("Year and grouping columns must be identical across completed data sets.", call. = FALSE)
     }
   }
   x <- data[[colName]]
-  if (!(is.factor(x) || is.character(x) || is.logical(x) || is.numeric(x))) {
+  types <- vapply(datasets, function(d) .column_type(d[[colName]]), character(1))
+  if (any(types != types[1L])) {
+    stop("Outcome types must match across completed data sets.", call. = FALSE)
+  }
+  if (types[1L] == "unsupported") {
     stop("Outcome must contain binary or categorical values.", call. = FALSE)
   }
   values <- unlist(lapply(datasets, function(d) as.character(d[[colName]])), use.names = FALSE)
@@ -146,11 +150,13 @@ PoDDyHePoPool <- function(imp, colName, grpVar = NULL, conf.level = 0.95,
   if (is.infinite(inflation)) {
     ci <- c(0, 1)
   } else {
-    critical <- stats::qt((1 + conf.level) / 2, df)
+    # Upper-tail form avoids rounding (1 + conf.level) / 2 up to exactly 1.
+    critical <- stats::qt((1 - conf.level) / 2, df, lower.tail = FALSE)
     a <- critical^2 * (1 + inflation) / n
     center <- (p + a / 2) / (1 + a)
     half <- sqrt(a * p * (1 - p) + a^2 / 4) / (1 + a)
-    ci <- c(max(0, center - half), min(1, center + half))
+    # Guard floating-point roundoff, including p = 1 with upper < 1 by 1 ulp.
+    ci <- c(min(p, max(0, center - half)), max(p, min(1, center + half)))
   }
   list(ci = ci, within = within, between = between, total = total, df = df)
 }

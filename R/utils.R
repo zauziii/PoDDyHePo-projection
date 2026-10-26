@@ -46,8 +46,19 @@
       any(data$age < 0)) {
     stop("`age` must be numeric, non-negative and fully observed.", call. = FALSE)
   }
-  if (anyNA(data$sex)) stop("`sex` must be fully observed.", call. = FALSE)
+  if (.column_type(data$sex) == "unsupported" || anyNA(data$sex)) {
+    stop("`sex` must be a fully observed factor, character, numeric or logical vector.", call. = FALSE)
+  }
+  if (is.numeric(data$sex) && any(!is.finite(data$sex))) {
+    stop("Numeric `sex` codes must be finite.", call. = FALSE)
+  }
   invisible(data)
+}
+
+.column_type <- function(x) {
+  if (!is.null(dim(x))) return("unsupported")
+  if (is.factor(x)) "factor" else if (is.logical(x)) "logical" else
+    if (is.numeric(x)) "numeric" else if (is.character(x)) "character" else "unsupported"
 }
 
 .completed_data <- function(imp) {
