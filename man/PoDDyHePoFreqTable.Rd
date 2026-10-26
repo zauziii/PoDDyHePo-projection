@@ -2,23 +2,25 @@
 % Please edit documentation in R/PoDDyHePoFreqTable.R
 \name{PoDDyHePoFreqTable}
 \alias{PoDDyHePoFreqTable}
-\title{Frequency table Function Developed for PoDDy-Hepo Project}
+\title{Response and missingness by survey year and group}
 \usage{
-PoDDyHePoFreqTable(data, colName)
+PoDDyHePoFreqTable(data, colName, grpVar = "sex")
 }
 \arguments{
-\item{data}{A data frame. It could be the well-formatted data, or the data frame whose prevalences are to be estimated.}
+\item{data}{A data frame containing \code{year} and the requested columns.}
 
-\item{colName}{A column that you want to create a frequency table for.}
+\item{colName}{One or more column names to summarise.}
+
+\item{grpVar}{Optional grouping column. Defaults to \code{"sex"}; use \code{NULL}
+for overall summaries. Missing groups are retained explicitly.}
 }
 \value{
-a table
+A data frame with \code{Year}, the grouping column (if requested),
+\code{Variable}, \code{Total}, \code{Response}, \code{Missing} and \code{Response_pct}.
 }
 \description{
-It returns a table arranged by Year and Sex.
+Response and missingness by survey year and group
 }
-\details{
-Description of PoDDyHePoFreqTable()
-
-The table includes total, respondents (N) and its proportion (%).
+\examples{
+PoDDyHePoFreqTable(testdata, c("smo", "obe"))
 }

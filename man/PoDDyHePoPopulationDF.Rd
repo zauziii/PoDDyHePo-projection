@@ -2,25 +2,60 @@
 % Please edit documentation in R/PoDDyHePoPopulationDF.R
 \name{PoDDyHePoPopulationDF}
 \alias{PoDDyHePoPopulationDF}
-\title{Function Developed to Join Population Forecats and Units Needs To Be Projected for PoDDy-HePo Project}
+\title{Append future populations matched to age-sex forecasts}
 \usage{
-PoDDyHePoPopulationDF(data, file, size, y2pred)
+PoDDyHePoPopulationDF(
+  data,
+  file = NULL,
+  size,
+  y2pred,
+  population = NULL,
+  sex_map = c(Males = "1", Females = "2"),
+  allocation = c("largest_remainder", "multinomial"),
+  seed = NULL
+)
 }
 \arguments{
-\item{data}{Well-formatted data.}
+\item{data}{Survey data with fully observed numeric \code{year}, numeric \code{age},
+and \code{sex}. Ages must be whole years.}
 
-\item{file}{Population forecasts from statistic Finland. If you are not using population forecasts from statistics Finland, follow the guidelines to create one.}
+\item{file}{Optional semicolon-delimited Statistics Finland export, with an
+\code{Age} column and columns beginning with a four-digit year and \code{Males} or
+\code{Females}. A heading before the column names is allowed.}
 
-\item{size}{Size of samples to be projected.}
+\item{size}{Positive integer number of synthetic people per future year.}
 
-\item{y2pred}{years that need to be projected.}
+\item{y2pred}{Unique years after the last survey year.}
+
+\item{population}{Alternative to \code{file}: a data frame with \code{year}, \code{age},
+\code{sex}, and \code{population}, one row per age-sex-year cell.}
+
+\item{sex_map}{Named character vector mapping wide-file sex labels to the
+survey codes. Defaults to \code{c(Males = "1", Females = "2")}.}
+
+\item{allocation}{\code{"largest_remainder"} (default) deterministically
+apportions exactly \code{size} rows per year. \code{"multinomial"} draws cell counts.}
+
+\item{seed}{Optional seed for multinomial allocation, without changing the
+caller's random-number state.}
 }
 \value{
-a data frame
+The survey data followed by future rows, retaining column types.
+Other future variables are \code{NA}. Attributes \code{projection_rows} and
+\code{last_observed_year} identify the appended rows and survey boundary.
 }
 \description{
-PoDDyHePoPopulationDF returns a data frame with units need to be projected.
+Append future populations matched to age-sex forecasts
 }
 \details{
-Description of PoDDyHePoPopulationDF()
+Every whole age between the observed minimum and maximum must be
+covered for every observed sex and requested year. Duplicate cells, missing
+years, multi-area exports and grouped ages in the requested age range are
+rejected. The bundled 2019-vintage forecast is for demonstration only.
+}
+\examples{
+f <- system.file("extdata", "003_128v_2040_20210730-015759.csv",
+                 package = "csprojections")
+future <- PoDDyHePoPopulationDF(testdata, f, size = 500, y2pred = 2030)
+table(future$year)
 }

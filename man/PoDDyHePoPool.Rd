@@ -2,25 +2,65 @@
 % Please edit documentation in R/PoDDyHePoPool.R
 \name{PoDDyHePoPool}
 \alias{PoDDyHePoPool}
-\title{Pool Function Developed for PoDDy-HePo project.}
+\title{Pool binary and categorical prevalences across imputations}
 \usage{
-PoDDyHePoPool(imp, colName, grpVar = NULL)
+PoDDyHePoPool(
+  imp,
+  colName,
+  grpVar = NULL,
+  conf.level = 0.95,
+  event = NULL,
+  diagnostics = FALSE
+)
 }
 \arguments{
-\item{imp}{Complete data (mids object) from PoDDyHePoProjeciton().}
+\item{imp}{A \code{mids} object, one completed data frame, or a list of completed
+data frames with the same rows and columns.}
 
-\item{colName}{A variable whose prevalences are to be estimated.}
+\item{colName}{Outcome column. Numeric outcomes must be integer category
+codes with at most 20 distinct values; otherwise use a factor.}
 
-\item{grpVar}{Grouping variable. The default is NULL. In our case, "sex" used as grouping variable, that is grpVar = "sex".}
+\item{grpVar}{Optional, fully observed grouping column, fixed across
+completed data sets. Use \code{NULL} for overall prevalences.}
+
+\item{conf.level}{Two-sided confidence level, strictly between zero and one.}
+
+\item{event}{Optional category whose prevalence is wanted. For a binary
+factor the default is the last declared level; for numeric/logical 0/1
+outcomes it is 1/TRUE. With more than two levels and no event, return all
+categories, including unused factor levels.}
+
+\item{diagnostics}{Add \code{N}, \code{M}, \code{SE}, \code{DF}, \code{Within} and \code{Between} columns.}
 }
 \value{
-Returns a data frame ready for plotting.
+A data frame with \code{Year}, optional grouping column, \code{EST},
+\code{CI_LOWER}, \code{CI_UPPER}, and \code{Group} for multicategory results. Estimates
+and limits are proportions. Attributes record event and confidence level.
 }
 \description{
-It calculates prevalences for variables of interest and combines the estimates from imputed data set.
+Pool binary and categorical prevalences across imputations
 }
 \details{
-Description of PoDDyHePoPool()
+Point estimates are arithmetic means of completed-data proportions.
+Intervals use the MI-Wilson method of Lott and Reiter (2020), with
+\code{qt((1 + conf.level) / 2, df)} for two-sided coverage. With one data set or
+zero between-imputation variance, the interval reduces to ordinary Wilson.
+An infinite variance-inflation factor gives the limiting interval
+\eqn{[0, 1]}.
 
-It is able to detect separated variable and returns a data frame with Year, Sex, estimated prevalence (EST), CI_LOWER and CI_UPPER.
+These are unweighted binomial approximations. They do not account for a
+complex survey design, population-forecast uncertainty, model selection,
+or unmodelled future changes. For synthetic future rows the chosen \code{size}
+affects the within-imputation term; these are not fully calibrated future
+prediction intervals. Compare sizes and model assumptions explicitly.
+}
+\examples{
+d <- testdata[!is.na(testdata$smo), ]
+pooled <- PoDDyHePoPool(d, "smo", "sex", diagnostics = TRUE)
+head(pooled)
+}
+\references{
+Lott A, Reiter JP (2020). Wilson Confidence Intervals for Binomial
+Proportions With Multiple Imputation for Missing Data. The American
+Statistician, 74(2), 109-115. doi:10.1080/00031305.2018.1473796.
 }

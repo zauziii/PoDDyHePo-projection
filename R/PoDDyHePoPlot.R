@@ -1,242 +1,111 @@
-#' Description of PoDDyHePoPlot()
-#' 
-#' @title Plot Function Developed for PoDDy-Hepo Project
+#' Plot pooled prevalences and intervals
 #'
-#' @description It plots the prevalences against survey year.
-#'
-#' @details Enables plotting even there is a variable whose proportion of each category has been calculated.
-#'
-#' @param data A data frame from `PoDDyHePoPool()`.
-#' @param year The maximum year in the observed data.
-#' @param grplabels The labels of grouping variable. By default, grplabels = NULL. In our case, grplabels = c("Men", "Women").
-#' @param title Title for the plot. It changes due to different response variable.
-#' @param y_min minimum value of y-axis(in percentage). For example, if 10 percent is the minimum value of y-axis, then type let y_min = 10.
-#' @param y_max maximum value of y-axis(in percentage). Let y_max = 75, if 75 percent is the maximum value of y-axis.
-#' @param sepvarlbl Labels of the variable whose proportion of each category has been calculated. The default is \code{NULL}. If it is \code{NULL}, the name of variable will then be like obe_0, obe_1, obe_2 take our case for example. If it is labelled, as the levels are sorted, please make sure that the labels are in right order. 
-#'
-#'
-#' @return Returns a figure
+#' @param data A summary data frame from [PoDDyHePoPool()].
+#' @param year Last observed survey year. Observed segments are solid; future
+#'   segments are dashed and connect to the last available observation.
+#' @param grplabels Optional group labels, in factor-level order (otherwise
+#'   sorted value order), or a named vector mapping original values to labels.
+#' @param title Optional plot title.
+#' @param y_min,y_max Displayed y-axis limits in percent. Values outside the
+#'   viewing window remain in the data and are clipped, rather than discarded.
+#' @param sepvarlbl Optional category labels, in declared category order, or a
+#'   named vector mapping `Group` values to labels.
+#' @param group_var Optional grouping column. Normally read from pooling
+#'   metadata or inferred from non-summary columns.
+#' @return A `ggplot` object which can be customised or saved with `ggsave()`.
 #' @export
-#' 
-#' @import ggplot2
-
-
-PoDDyHePoPlot <- function(data, year, grplabels = NULL, title, y_min, y_max, sepvarlbl = NULL){
-  
-  if(ncol(data) == 4){
-    
-    if(!is.null(grplabels)){
-      cat("Not using a grouping variable, there should not be grplabels. \n However, programme continue...")
-    }
-    
-    ggplot(data = data[data$Year <= year, ], aes(x = .data$Year, y = 100 * .data$EST)) +
-      geom_line(size = 0.65, position = position_dodge(width = 1.5), color = "blue") +
-      geom_line(data = data[data$Year >= year, ], linetype = "dashed", size = 0.65, position = position_dodge(width = 1.5), color = "blue") +
-      geom_point(size = 3, position = position_dodge(width = 1.5), color = "blue") +
-      geom_point(data = data[data$Year > year, ], size = 3, position = position_dodge(width = 1.5), color = "blue") +
-      geom_errorbar(aes(ymin = 100 * .data$CI_LOWER,
-                        ymax = 100 * .data$CI_UPPER),
-                    width = 1.5,
-                    position = position_dodge(width = 1.5),
-                    color = "blue") +
-      geom_errorbar(data = data[data$Year > year, ],
-                    aes(ymin = 100 * .data$CI_LOWER,
-                        ymax = 100 * .data$CI_UPPER),
-                    width = 1.5,
-                    position = position_dodge(width = 1.5), 
-                    color = "blue") +
-      scale_y_continuous(name = "%",
-                         limits = c(y_min, y_max),
-                         breaks = c(seq(0, floor(y_max/10)*10, 10), y_max)) +
-      scale_x_continuous(breaks = unique(data$Year)) +
-      theme_bw() +
-      ggtitle(title) +
-      theme(plot.title = element_text(hjust = 0.5 ,margin = margin(5, 0, 15, 0), size = 28),
-            axis.title.x = element_text(margin = margin(5, 0, 5, 0), size = 22),
-            axis.text.x = element_text(size = 16, angle = 45, vjust = 0.5),
-            axis.title.y = element_text(margin = margin(0, 5, 0, 10), size = 22),
-            axis.text.y = element_text(size = 18),
-            legend.title = element_text(size = 16),
-            legend.text = element_text(size = 24),
-            legend.margin = margin(0, 0, 0, 0),
-            panel.grid.minor = element_blank()) +
-      theme(aspect.ratio = 2/3)
-    
-  } else if(ncol(data) == 5 & "Group" %in% names(data)){
-    
-    if(!is.null(grplabels)){
-      cat("Not using a grouping variable, there should not be grplabels. \n However, programme continue...")
-    }
-    
-    # Levels for seperated variable
-    levels <- sort(unique(data$Group))
-    
-    # Label seperated variable
-    if(is.null(sepvarlbl)){
-      sepvarlbl <- levels
-    }
-    
-    data$Group <- factor(data$Group, 
-                         labels = sepvarlbl,
-                         levels = levels)
-    
-    # Plot
-    ggplot(data = data[data$Year <= year, ], aes(x = .data$Year, y = 100 * .data$EST, color = .data$Group, group = .data$Group)) +
-      geom_point(aes(shape = .data$Group), size = 2.5, position = position_dodge(width = 2.5)) +
-      geom_point(aes(shape = .data$Group), data = data[data$Year > year, ], size = 2.5, position = position_dodge(width = 2.5)) +
-      geom_line(size = 0.65, position = position_dodge(width = 2.5)) +
-      geom_line(data = data[data$Year >= year, ], linetype = "dashed", size = 0.65, position = position_dodge(width = 2.5)) +
-      geom_errorbar(aes(ymin = 100 * .data$CI_LOWER,
-                        ymax = 100 * .data$CI_UPPER),
-                    width = 3,
-                    position = position_dodge(width = 2.5)) +
-      geom_errorbar(data = data[data$Year > year, ],
-                    aes(ymin = 100 * .data$CI_LOWER,
-                        ymax = 100 * .data$CI_UPPER),
-                    width = 3,
-                    position = position_dodge(width = 2.5)) +
-      scale_y_continuous(name = "%",
-                         limits = c(y_min, y_max),
-                         breaks = c(seq(0, floor(y_max/10)*10, 10), y_max)) +
-      scale_x_continuous(breaks = unique(data$Year)) +
-      scale_shape_manual(name = " ",
-                         labels = sepvarlbl,
-                         values = c(21, 24, 22, 23, 25)) + 
-      ggtitle(title) +
-      scale_color_manual(name = " ",
-                         values = c("blue", "red", "black", "#61D04F", "#28E2E5", "#CD0BBC", "#F5C710", "gray62"),
-                         guide = "none") + 
-      theme_bw() + 
-      theme(plot.title = element_text(hjust = 0.5 ,margin = margin(5, 0, 15, 0), size = 28),
-            axis.title.x = element_text(margin = margin(5, 0, 5, 0), size = 20),
-            axis.text.x = element_text(size = 14, angle = 45, vjust = 0.5),
-            axis.title.y = element_text(margin = margin(0, 5, 0, 10), size = 20),
-            axis.text.y = element_text(size = 18),
-            legend.title = element_text(size = 16),
-            legend.text = element_text(size = 20),
-            legend.margin = margin(0, 0, 0, 0),
-            strip.text.x = element_text(size = 18),
-            strip.background = element_rect(fill = "gray95", color = "black"),
-            panel.border = element_rect(color = "black"),
-            panel.spacing = unit(0.35, "lines"),
-            panel.grid.minor = element_blank()) +
-      theme(aspect.ratio = 2/3)
-    
-  } else if(ncol(data) == 5 & !"Group" %in% names(data)){
-    
-    if(is.null(grplabels)){
-      cat("Grouping variable applied, it would be better if grplabels specified. \n")
-    }
-    
-    grpVar <- names(data)[!names(data) %in% c("Year", "EST", "CI_LOWER", "CI_UPPER")]
-    
-    # Plot (not seperated variable)
-    ggplot(data = data[data$Year <= year, ], aes(x = .data$Year, y = 100 * .data$EST, color = .data[[grpVar]])) +
-      geom_line(size = 0.65, position = position_dodge(width = 1.5)) +
-      geom_line(data = data[data$Year >= year, ], linetype = "dashed", size = 0.65, position = position_dodge(width = 1.5)) +
-      geom_point(aes(fill = .data[[grpVar]], shape = .data$.data[[names(data)[!names(data) %in% c("Year", "EST", "CI_LOWER", "CI_UPPER")]]]), size = 3, position = position_dodge(width = 1.5)) +
-      geom_point(aes(shape = .data[[grpVar]]), data = data[data$Year > year, ], size = 3, position = position_dodge(width = 1.5)) +
-      geom_errorbar(aes(ymin = 100 * .data$CI_LOWER,
-                        ymax = 100 * .data$CI_UPPER),
-                    width = 1.5,
-                    position = position_dodge(width = 1.5)) +
-      geom_errorbar(data = data[data$Year > year, ],
-                    aes(ymin = 100 * .data$CI_LOWER,
-                        ymax = 100 * .data$CI_UPPER),
-                    width = 1.5,
-                    position = position_dodge(width = 1.5)) +
-      scale_y_continuous(name = "%",
-                         limits = c(y_min, y_max),
-                         breaks = c(seq(0, floor(y_max/10)*10, 10), y_max)) +
-      scale_x_continuous(breaks = unique(data$Year)) +
-      scale_color_manual(name = " ",
-                         labels = grplabels,
-                         values = c("blue", "red", "black", "#61D04F", "#28E2E5", "#CD0BBC", "#F5C710", "gray62")) + 
-      scale_shape_manual(name = " ",
-                         labels = grplabels,
-                         values = c(21, 24, 22, 23, 25)) + 
-      scale_fill_manual(guide = "none",
-                        values = c("blue", "red", "black", "#61D04F", "#28E2E5", "#CD0BBC", "#F5C710", "gray62")) +
-      theme_bw() +
-      ggtitle("title") +
-      theme(plot.title = element_text(hjust = 0.5 ,margin = margin(5, 0, 15, 0), size = 28),
-            axis.title.x = element_text(margin = margin(5, 0, 5, 0), size = 22),
-            axis.text.x = element_text(size = 16, angle = 45, vjust = 0.5),
-            axis.title.y = element_text(margin = margin(0, 5, 0, 10), size = 22),
-            axis.text.y = element_text(size = 18),
-            legend.title = element_text(size = 16),
-            legend.text = element_text(size = 24),
-            legend.margin = margin(0, 0, 0, 0),
-            panel.grid.minor = element_blank()) +
-      theme(aspect.ratio = 2/3)
-  } else{
-    
-    colnames(data) <- c("Year", "grpVar", "EST", "CI_LOWER", "CI_UPPER", "Group")
-    
-    if(is.null(grplabels)){
-      grplabels <- sort(unique(data$grpVar))
-      cat("Grouping variable applied, it would be better if grplabels specified. \n")
-    }
-    # Levels for seperated variable
-    levels <- sort(unique(data$Group))
-    
-    # Label seperated variable
-    if(is.null(sepvarlbl)){
-      sepvarlbl <- levels
-    }
-    
-    data$Group <- factor(data$Group, 
-                         labels = sepvarlbl,
-                         levels = levels)
-    
-    # Label grouping variable
-    data$grpVar <- factor(data$grpVar,
-                          levels = sort(unique(data$grpVar)),
-                          labels = grplabels)
-    
-    # Plot
-    ggplot(data = data[data$Year <= year, ], aes(x = .data$Year, y = 100 * .data$EST, color = .data$grpVar, group = .data$Group)) +
-      geom_point(aes(fill = .data$grpVar, shape = .data$Group), size = 2.5, position = position_dodge(width = 2.5)) +
-      geom_point(aes(shape = .data$Group), data = data[data$Year > year, ], size = 2.5, position = position_dodge(width = 2.5)) +
-      geom_line(size = 0.65, position = position_dodge(width = 2.5)) +
-      geom_line(data = data[data$Year >= year, ], linetype = "dashed", size = 0.65, position = position_dodge(width = 2.5)) +
-      geom_errorbar(aes(ymin = 100 * .data$CI_LOWER,
-                        ymax = 100 * .data$CI_UPPER),
-                    width = 3,
-                    position = position_dodge(width = 2.5)) +
-      geom_errorbar(data = data[data$Year > year, ],
-                    aes(ymin = 100 * .data$CI_LOWER,
-                        ymax = 100 * .data$CI_UPPER),
-                    width = 3,
-                    position = position_dodge(width = 2.5)) +
-      scale_y_continuous(name = "%",
-                         limits = c(y_min, y_max),
-                         breaks = c(seq(0, floor(y_max/10)*10, 10), y_max)) +
-      scale_x_continuous(breaks = unique(data$Year)) +
-      scale_shape_manual(name = " ",
-                         labels = sepvarlbl,
-                         values = c(21, 24, 22, 23, 25)) + 
-      scale_fill_manual(guide = "none",
-                        values = c("blue", "red", "black", "#61D04F", "#28E2E5", "#CD0BBC", "#F5C710", "gray62")) +
-      ggtitle("title") +
-      facet_wrap( ~ grpVar) +
-      scale_color_manual(name = " ",
-                         labels = c("Men", "Women"),
-                         values = c("blue", "red", "black", "#61D04F", "#28E2E5", "#CD0BBC", "#F5C710", "gray62"),
-                         guide = "none") + 
-      theme_bw() + 
-      theme(plot.title = element_text(hjust = 0.5 ,margin = margin(5, 0, 15, 0), size = 28),
-            axis.title.x = element_text(margin = margin(5, 0, 5, 0), size = 20),
-            axis.text.x = element_text(size = 14, angle = 45, vjust = 0.5),
-            axis.title.y = element_text(margin = margin(0, 5, 0, 10), size = 20),
-            axis.text.y = element_text(size = 18),
-            legend.title = element_text(size = 16),
-            legend.text = element_text(size = 20),
-            legend.margin=margin(0, 0, 0, 0),
-            strip.text.x = element_text(size = 18),
-            strip.background = element_rect(fill = "gray95", color = "black"),
-            panel.border = element_rect(color = "black"),
-            panel.spacing = unit(0.35, "lines"),
-            panel.grid.minor = element_blank())
+#' @importFrom rlang .data
+#' @examples
+#' d <- testdata[!is.na(testdata$smo), ]
+#' pooled <- PoDDyHePoPool(d, "smo", "sex")
+#' PoDDyHePoPlot(pooled, 2017, c("Men", "Women"), "Current smoking")
+PoDDyHePoPlot <- function(data, year, grplabels = NULL, title = NULL,
+                          y_min = 0, y_max = 100, sepvarlbl = NULL,
+                          group_var = NULL) {
+  .check_data(data, c("Year", "EST", "CI_LOWER", "CI_UPPER"))
+  .check_number(year, "year")
+  .check_number(y_min, "y_min", 0)
+  .check_number(y_max, "y_max", 0)
+  if (y_min >= y_max || y_max > 100) stop("Y-axis limits must satisfy 0 <= y_min < y_max <= 100.", call. = FALSE)
+  .check_year(data$Year, "Year")
+  summary_cols <- c("Year", "EST", "CI_LOWER", "CI_UPPER", "Group",
+                     "N", "M", "SE", "DF", "Within", "Between")
+  if (is.null(group_var)) group_var <- attr(data, "grouping_variable", exact = TRUE)
+  if (is.null(group_var)) {
+    candidates <- setdiff(names(data), summary_cols)
+    if (length(candidates) > 1L) stop("Cannot infer grouping column; supply `group_var`.", call. = FALSE)
+    if (length(candidates)) group_var <- candidates
   }
+  if (!is.null(group_var)) .check_name(group_var, data, "group_var")
+  for (name in c("EST", "CI_LOWER", "CI_UPPER")) {
+    if (!is.numeric(data[[name]]) || anyNA(data[[name]]) ||
+        any(!is.finite(data[[name]])) || any(data[[name]] < 0 | data[[name]] > 1)) {
+      stop("Estimates and interval limits must be finite proportions between 0 and 1.", call. = FALSE)
+    }
+  }
+  if (any(data$CI_LOWER > data$EST | data$CI_UPPER < data$EST)) {
+    stop("Confidence limits must enclose their estimates.", call. = FALSE)
+  }
+  category <- "Group" %in% names(data)
+  if (category && anyNA(data$Group)) stop("Category labels cannot be missing.", call. = FALSE)
+  if (!is.null(group_var) && anyNA(data[[group_var]])) stop("Group labels cannot be missing.", call. = FALSE)
+  d <- data
+  d$.facet <- if (is.null(group_var)) factor("All") else .plot_labels(d[[group_var]], grplabels, "grplabels")
+  if (is.null(group_var) && !is.null(grplabels)) warning("`grplabels` ignored for ungrouped data.", call. = FALSE)
+  d$.colour <- if (category) .plot_labels(d$Group, sepvarlbl, "sepvarlbl") else d$.facet
+  if (!category && !is.null(sepvarlbl)) warning("`sepvarlbl` ignored for a single outcome category.", call. = FALSE)
+  d$.series <- interaction(d$.facet, d$.colour, drop = TRUE)
+  if (anyDuplicated(d[c("Year", ".series")])) stop("Duplicate year-series rows cannot be plotted.", call. = FALSE)
+  d <- d[order(d$.series, d$Year), , drop = FALSE]
+  observed <- d[d$Year <= year, , drop = FALSE]
+  future <- d[d$Year > year, , drop = FALSE]
+  # Bridge each series independently, even if its last observed year is earlier.
+  bridges <- observed[!duplicated(observed$.series, fromLast = TRUE) &
+                        observed$.series %in% future$.series, , drop = FALSE]
+  projected <- rbind(bridges, future)
+  line_rows <- function(x) {
+    n <- table(x$.series)
+    x[x$.series %in% names(n)[n >= 2L], , drop = FALSE]
+  }
+  observed <- line_rows(observed)
+  projected <- line_rows(projected)
+  palette <- c("#0072B2", "#D55E00", "#009E73", "#CC79A7", "#E69F00",
+                "#56B4E9", "#666666", "#222222")
+  n <- nlevels(d$.colour)
+  if (n > length(palette)) palette <- grDevices::hcl.colors(n, "Dark 3")
+  p <- ggplot2::ggplot(d, ggplot2::aes(x = .data$Year, y = 100 * .data$EST,
+                    colour = .data$.colour, group = .data$.series)) +
+    ggplot2::geom_line(data = observed, linewidth = 0.6) +
+    ggplot2::geom_line(data = projected, linewidth = 0.6, linetype = "dashed") +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin = 100 * .data$CI_LOWER,
+                                      ymax = 100 * .data$CI_UPPER),
+                           width = 0.7, linewidth = 0.35) +
+    ggplot2::geom_point(size = 2) +
+    ggplot2::scale_colour_manual(values = palette[seq_len(n)]) +
+    ggplot2::scale_x_continuous(breaks = sort(unique(d$Year))) +
+    ggplot2::coord_cartesian(ylim = c(y_min, y_max)) +
+    ggplot2::labs(x = "Year", y = "Prevalence (%)", colour = NULL, title = title) +
+    ggplot2::theme_bw(base_size = 11) +
+    ggplot2::theme(legend.position = "top", panel.grid.minor = ggplot2::element_blank(),
+                   axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
+  if (category && !is.null(group_var)) p <- p + ggplot2::facet_wrap(stats::as.formula("~ .facet"))
+  p
+}
+
+.plot_labels <- function(x, labels, arg) {
+  lev <- .levels_present(x)
+  if (is.null(labels)) labels <- lev else {
+    if (!is.character(labels) || anyNA(labels) || anyDuplicated(labels)) {
+      stop("`", arg, "` must contain unique non-missing character labels.", call. = FALSE)
+    }
+    if (!is.null(names(labels))) {
+      if (anyDuplicated(names(labels)) || !all(lev %in% names(labels))) {
+        stop("Named `", arg, "` must cover every level.", call. = FALSE)
+      }
+      labels <- unname(labels[lev])
+    } else if (length(labels) != length(lev)) {
+      stop("`", arg, "` must have one label per level.", call. = FALSE)
+    }
+  }
+  factor(as.character(x), levels = lev, labels = labels)
 }
