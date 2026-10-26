@@ -2,30 +2,64 @@
 % Please edit documentation in R/PoDDyHePoProjection.R
 \name{PoDDyHePoProjection}
 \alias{PoDDyHePoProjection}
-\title{Projection Function Developed for PoDDy-HePo Project}
+\title{Project individual values using chained-equations imputation}
 \usage{
-PoDDyHePoProjection(data, m = 5, maxit = 10, printFlag = F, ...)
+PoDDyHePoProjection(
+  data,
+  m = 5,
+  maxit = 10,
+  printFlag = FALSE,
+  ...,
+  formulas = NULL,
+  seed = NULL,
+  method = NULL,
+  observed_until = NULL,
+  mice.args = list()
+)
 }
 \arguments{
-\item{data}{A well-formatted data set ready for projection.}
+\item{data}{Survey rows followed by future rows, normally from
+\code{\link[=PoDDyHePoPopulationDF]{PoDDyHePoPopulationDF()}}. Demographic columns must be fully observed.}
 
-\item{m}{Number of multiple imputations. The default is \code{m=5}.}
+\item{m}{Positive integer number of imputations.}
 
-\item{maxit}{A scalar giving the number of iterations. By default, `maxit = 10`.}
+\item{maxit}{Positive integer number of iterations.}
 
-\item{printFlag}{If `TRUE`, `mice` will print history on console. Use `print=FALSE` for silent computation.}
+\item{printFlag}{Whether to print iteration history.}
 
-\item{...}{Formulas.}
+\item{...}{Two-sided formulas, one per variable with missing values.
+Dot notation such as \code{y ~ .} includes all other data columns.}
+
+\item{formulas}{Alternative named or unnamed list of formulas; do not also
+supply formulas in \code{...}.}
+
+\item{seed}{Optional integer random seed.}
+
+\item{method}{Optional named vector of univariate mice imputation methods,
+one per incomplete variable. Defaults to measurement-level-specific methods.}
+
+\item{observed_until}{Optional last observed year. Otherwise read from the
+population-data attribute. Rows after this year are imputed but excluded
+from fitting imputation models.}
+
+\item{mice.args}{Named list of additional mice arguments. Core arguments,
+blocks, predictor matrices and auxiliary predictors cannot be overridden.}
 }
 \value{
-Returns an S3 object of class \code{\link[=mids-class]{mids}}
-       (multiply imputed data set)
+A \code{mice::mids} object. Inspect its \code{loggedEvents} and chain traces
+before interpreting projections.
 }
 \description{
-PoDDyHePoProjection() is the main body for projection. It projects individual-level values of the variables using multiple imputation.
+Project individual values using chained-equations imputation
 }
 \details{
-Description of PoDDyHePoProjection()
-
-It allows user to set up basic settings like number of multiple imputations(\code{m}), number of iterations(\code{maxit}) and whether to show the history(\code{printFlag}). It returns a \code{\link[=mids-class]{mids}} object if and only if when every variable with missingess has given a formula.
+All incomplete variables need explicit formulas. Formulas are used
+exactly as supplied: auxiliary predictors are disabled. Character columns
+must be converted to factors. Multivariate imputation methods that ignore
+held-out rows are rejected when future rows are present.
+}
+\examples{
+d <- testdata[c("year", "sex", "age", "smo")]
+imp <- PoDDyHePoProjection(d, m = 2, maxit = 2,
+                          formulas = list(smo ~ year + sex + age), seed = 42)
 }

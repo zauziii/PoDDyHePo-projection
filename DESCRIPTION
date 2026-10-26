@@ -1,31 +1,34 @@
-Package: csprojections
+Package: poddyhepo
 Type: Package
-Title: Projection Method for PoDDy-HePo Project
-Version: 1.0.0
-Authors@R: 
-    c(person("Zhi", "Zhou", email = "zhi.zhou@thl.fi", role = c("cre", "aut")),
-      person("Jaakko", "Reinikainen", role = "aut"),
-      person("Tommi", "Härkänen", role = "aut"),
-      person("Hanna", "Tolonen", role = "aut"),
-      person("et al", role = "ctb"))
-Description: This package includes some useful functions for PoDDy-HePo Project.
+Title: Population Health Projections for the PoDDy-HePo Project
+Version: 1.1.0
+Authors@R: c(
+    person("Zhi", "Zhou", email = "zhi.zhou@thl.fi", role = c("cre", "aut")),
+    person("Jaakko", "Reinikainen", role = "aut"),
+    person("Tommi", "Härkänen", role = "aut"),
+    person("Hanna", "Tolonen", role = "aut"))
+Description: Prepare synthetic future populations from age-sex forecasts,
+    compare projection models by the Bayesian information criterion, project
+    health indicators using chained-equations multiple imputation, and
+    summarise and plot pooled prevalences. Includes input validation,
+    reproducible examples, and modified Wilson confidence intervals. Developed
+    from the PoDDy-HePo project on projections of disease and disability burden
+    in Finland and their implications for health policy.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Depends:
-    R (>= 3.5.0),
-    mice, 
-    ggplot2,
-    magrittr,
-    MIWilson,
-    dplyr
+Depends: R (>= 4.1.0)
 Imports:
+    ggplot2 (>= 3.4.0),
+    grDevices,
+    mice (>= 3.15.0),
+    nnet,
     rlang,
-    stats,
-    plyr,
-    qwraps2,
-    fastDummies,
     splines,
-    stringi
-RoxygenNote: 7.1.2
-
+    stats,
+    utils
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1

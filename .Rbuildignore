@@ -1,5 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^.*\.log$
-^README.Rmd
-^csprojections_0.1.0.tar.gz
+^\.github$
+^data-raw$
+^README\.Rmd$
+^.*\.tar\.gz$
+^.*\.Rcheck$
+^VALIDATION\.md$
+^UPGRADE_NOTES_ZH\.md$

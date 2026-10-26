@@ -2,41 +2,47 @@
 % Please edit documentation in R/PoDDyHePoPlot.R
 \name{PoDDyHePoPlot}
 \alias{PoDDyHePoPlot}
-\title{Plot Function Developed for PoDDy-Hepo Project}
+\title{Plot pooled prevalences and intervals}
 \usage{
 PoDDyHePoPlot(
   data,
   year,
   grplabels = NULL,
-  title,
-  y_min,
-  y_max,
-  sepvarlbl = NULL
+  title = NULL,
+  y_min = 0,
+  y_max = 100,
+  sepvarlbl = NULL,
+  group_var = NULL
 )
 }
 \arguments{
-\item{data}{A data frame from `PoDDyHePoPool()`.}
+\item{data}{A summary data frame from \code{\link[=PoDDyHePoPool]{PoDDyHePoPool()}}.}
 
-\item{year}{The maximum year in the observed data.}
+\item{year}{Last observed survey year. Observed segments are solid; future
+segments are dashed and connect to the last available observation.}
 
-\item{grplabels}{The labels of grouping variable. By default, grplabels = NULL. In our case, grplabels = c("Men", "Women").}
+\item{grplabels}{Optional group labels, in factor-level order (otherwise
+sorted value order), or a named vector mapping original values to labels.}
 
-\item{title}{Title for the plot. It changes due to different response variable.}
+\item{title}{Optional plot title.}
 
-\item{y_min}{minimum value of y-axis(in percentage). For example, if 10 percent is the minimum value of y-axis, then type let y_min = 10.}
+\item{y_min, y_max}{Displayed y-axis limits in percent. Values outside the
+viewing window remain in the data and are clipped, rather than discarded.}
 
-\item{y_max}{maximum value of y-axis(in percentage). Let y_max = 75, if 75 percent is the maximum value of y-axis.}
+\item{sepvarlbl}{Optional category labels, in declared category order, or a
+named vector mapping \code{Group} values to labels.}
 
-\item{sepvarlbl}{Labels of the variable whose proportion of each category has been calculated. The default is \code{NULL}. If it is \code{NULL}, the name of variable will then be like obe_0, obe_1, obe_2 take our case for example. If it is labelled, as the levels are sorted, please make sure that the labels are in right order.}
+\item{group_var}{Optional grouping column. Normally read from pooling
+metadata or inferred from non-summary columns.}
 }
 \value{
-Returns a figure
+A \code{ggplot} object which can be customised or saved with \code{ggsave()}.
 }
 \description{
-It plots the prevalences against survey year.
+Plot pooled prevalences and intervals
 }
-\details{
-Description of PoDDyHePoPlot()
-
-Enables plotting even there is a variable whose proportion of each category has been calculated.
+\examples{
+d <- testdata[!is.na(testdata$smo), ]
+pooled <- PoDDyHePoPool(d, "smo", "sex")
+PoDDyHePoPlot(pooled, 2017, c("Men", "Women"), "Current smoking")
 }

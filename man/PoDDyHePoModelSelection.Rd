@@ -2,7 +2,7 @@
 % Please edit documentation in R/PoDDyHePoModelSelection.R
 \name{PoDDyHePoModelSelection}
 \alias{PoDDyHePoModelSelection}
-\title{Model Selection Function Developed for PoDDy-HePo Project (BIC based)}
+\title{Compare BIC-selected projection formulas across completed data sets}
 \usage{
 PoDDyHePoModelSelection(
   imp,
@@ -11,38 +11,71 @@ PoDDyHePoModelSelection(
   df = NULL,
   knots = NULL,
   b.knots = NULL,
-  f.var = NULL
+  f.var = NULL,
+  predictors = NULL,
+  family = c("auto", "binomial", "gaussian", "multinomial"),
+  interactions = TRUE,
+  direction = c("both", "backward", "forward"),
+  trace = FALSE
 )
 }
 \arguments{
-\item{imp}{An object of class \code{mids} (produced by \code{mice()}.}
+\item{imp}{A \code{mids} object, completed data frame, or list of completed frames.}
 
-\item{DV}{Abbreviation of Dependent Variable.}
+\item{DV}{One outcome column name.}
 
-\item{NsVar}{A specific variable to which would apply nature splines. The default is \code{NULL}.}
+\item{NsVar}{Optional numeric predictor names modelled with natural splines.}
 
-\item{df}{Degrees of freedom. The default is \code{df=NULL}.}
+\item{df}{Candidate spline degrees of freedom, applied to each \code{NsVar}.
+The linear specification is always compared. Ignored when \code{knots} is given.}
 
-\item{knots}{Breakpoints that define the spline.}
+\item{knots}{Interior knots: a vector for one spline variable, a list (one
+vector per variable), or one numeric knot per variable.}
 
-\item{b.knots}{Boundary points at which to impose the natural boundary conditions and anchor the B-spline basis (default the range of the data).}
+\item{b.knots}{Boundary knots: a pair for one variable, or a list of pairs.
+Defaults to each variable's range in the first completed data set.}
 
-\item{f.var}{Fixed variables. Variables that are fixed in the model (will not be removed by stepwise process).}
+\item{f.var}{Character vector of mandatory terms, for example
+\code{c("year", "sex", "age", "year:sex")}. Main effects involved in mandatory
+terms are retained as well.}
+
+\item{predictors}{Optional candidate predictor names. Defaults to all other
+columns; exclude identifiers and non-predictors explicitly.}
+
+\item{family}{\code{"auto"}, \code{"binomial"}, \code{"gaussian"} or \code{"multinomial"}.
+Auto uses binomial for two-level categorical or numeric 0/1 outcomes,
+multinomial for factors with more levels, and Gaussian for other numeric
+outcomes. Ordered factors are treated as multinomial, not ordinal logits.}
+
+\item{interactions}{Whether to consider all two-way predictor interactions.}
+
+\item{direction}{Stepwise search direction.}
+
+\item{trace}{Whether to print the stepwise search.}
 }
 \value{
-Returns a list with 4 elements: Models, Mean BIC, Selected Models and Suggested Model.
+A list retaining the four original elements: \code{Models} contains a
+\code{mira} of search results per spline specification; \verb{Mean BIC} contains
+mean BICs of its common selected formula; \verb{Selected Models} contains those
+formulas; \verb{Suggested Model} is the formula with smallest mean BIC.
+Extra elements \verb{Candidate BIC}, \verb{Selection frequency} and \code{Family} expose
+comparisons and search stability. Each candidate formula is refitted to
+every completed data set before comparison.
 }
 \description{
-PoDDyHePoModelSelection returns a list of 4 elements: 
-             Models (Records all selected models of each imputed data set), 
-             Mean BIC (Records Mean BIC of each round of imputation),
-             Selected Models (Records a selected model/selected models over imputation of cases)
-             Suggested Model (Records a suggested model with smaller BIC value)
+Compare BIC-selected projection formulas across completed data sets
 }
 \details{
-Description of PoDDyHePoModelSelection()
-
-When NsVar = NULL, there is only one BIC value in Mean BIC and one model in Selected Models, the model in Selected Models is the same as in Suggested Model.
-         df or knots should be denied.
-         When both knots and b.knots are specified, df will be ignored.
+This is a descriptive model-selection heuristic, not a pooled BIC
+test or a substitute for sensitivity analysis. Stepwise search does not
+guarantee a global optimum. Spline knots and numeric scaling constants are
+fixed from the first completed data set and embedded in formulas, making
+the same formula usable in subsequent projection. Numeric predictors are
+scaled inline for multinomial models to improve numerical stability.
+}
+\examples{
+d <- testdata[!is.na(testdata$smo), c("smo", "year", "sex", "age")]
+fit <- PoDDyHePoModelSelection(d, "smo", f.var = c("year", "age"),
+                             interactions = FALSE)
+fit$`Suggested Model`
 }
